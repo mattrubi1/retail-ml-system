@@ -4,7 +4,7 @@ import pandas as pd
 st.title("Retail ML System")
 
 # LOAD DATA FROM GITHUB RAW FILE
-url = "https://raw.githubusercontent.com/YOUR_USERNAME/retail-ml-system/main/data.csv"
+url = "https://raw.githubusercontent.com/mattrubi1/retail-ml-system/main/data.csv"
 
 df = pd.read_csv(url)
 
