@@ -4,6 +4,7 @@ import random
 
 from ml_engine import predict
 from ai_engine import enrich_dataframe
+from gpt_engine import enrich_with_gpt
 from utils import generate_sku, normalize_sku
 from alerts import send_alert
 
@@ -68,7 +69,8 @@ def generate_data():
 df = generate_data()
 
 df = predict(df)
-df = enrich_dataframe(df)
+df = enrich_dataframe(df)        # AI layer
+df = enrich_with_gpt(df)        # GPT layer
 
 df.to_csv(DATA_PATH, index=False, encoding="utf-8")
 
@@ -76,14 +78,18 @@ print("DEBUG: rows =", len(df))
 
 
 # =========================
-# FILTER TOP DEALS
+# FINAL DEAL FILTER
 # =========================
-deals = df[df["ml_score"] >= 80].sort_values("ml_score", ascending=False).head(10)
+deals = df[df["gpt_score"] >= 80].sort_values("gpt_score", ascending=False).head(10)
 
+
+# =========================
+# GPT ALERT MESSAGE
+# =========================
 if deals.empty:
-    message = "🚨 NO HIGH VALUE DEALS FOUND THIS RUN"
+    message = "🚨 NO ELITE DEALS FOUND"
 else:
-    message = "🚨 AI DEAL INTELLIGENCE ALERT\n\n"
+    message = "🤖 GPT-LEVEL DEAL INTELLIGENCE ALERT\n\n"
 
     for _, row in deals.iterrows():
 
@@ -94,15 +100,19 @@ else:
 💰 ${row['price']} (Was ${row['original_price']})
 📉 {row['drop_pct']}% OFF
 📦 Stock: {row['stock_qty']}
+
 🧠 ML Score: {row['ml_score']}
 🤖 AI Score: {row['ai_score']}
+🧬 GPT Score: {row['gpt_score']}
 
-💡 Why:
-{row['ai_reasons']}
+🚀 Verdict: {row['gpt_verdict']}
+
+💡 Reasoning:
+{row['gpt_reasoning']}
 
 ----------------------
 """
 
 send_alert(message)
 
-print("✅ Scheduler finished")
+print("✅ GPT Deal Engine finished")
