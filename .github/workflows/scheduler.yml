@@ -2,15 +2,14 @@ name: Retail ML Scheduler
 
 on:
   schedule:
-    - cron: "*/30 * * * *"   # runs every 30 minutes
-  workflow_dispatch:        # allows manual run
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
 
 jobs:
   run-scheduler:
     runs-on: ubuntu-latest
 
     env:
-      # Optional: prevents future Node warnings
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
@@ -37,13 +36,16 @@ jobs:
           pip install -r requirements.txt
 
       # =========================
-      # RUN SCHEDULER
+      # RUN SCHEDULER (WITH TELEGRAM SECRETS)
       # =========================
       - name: Run scheduler
         run: python scheduler.py
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
 
       # =========================
-      # COMMIT UPDATED CSV (CRITICAL FIX)
+      # COMMIT UPDATED CSV
       # =========================
       - name: Commit updated data
         run: |
