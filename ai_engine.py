@@ -1,70 +1,76 @@
-import pandas as pd
+import os
+import json
+from openai import OpenAI
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 def analyze_deal(row):
 
-    score = 0
-    reasons = []
+    prompt = f"""
+You are a retail deal intelligence system.
 
-    # -------------------------
-    # DISCOUNT SIGNAL
-    # -------------------------
-    if row.get("drop_pct", 0) >= 40:
-        score += 40
-        reasons.append("🔥 Heavy discount (40%+)")
-    elif row.get("drop_pct", 0) >= 25:
-        score += 25
-        reasons.append("📉 Strong discount")
+Return ONLY valid JSON.
 
-    # -------------------------
-    # STOCK PRESSURE
-    # -------------------------
-    if row.get("stock_qty", 0) <= 5:
-        score += 30
-        reasons.append("⚠️ Very low stock (scarcity)")
-    elif row.get("stock_qty", 0) <= 15:
-        score += 15
-        reasons.append("📦 Moderate stock pressure")
+Product:
+- Name: {row.get('item_name')}
+- Price: {row.get('price')}
+- Original Price: {row.get('original_price')}
+- Discount %: {row.get('drop_pct')}
+- Stock: {row.get('stock_qty')}
+- Velocity: {row.get('velocity')}
+- Store: {row.get('store_name')}
 
-    # -------------------------
-    # DEMAND SIGNAL
-    # -------------------------
-    if row.get("velocity", 0) >= 8:
-        score += 25
-        reasons.append("🚀 High demand item")
-    elif row.get("velocity", 0) >= 5:
-        score += 15
-        reasons.append("📊 Moderate demand")
+JSON format:
+{{
+  "score": 0-100,
+  "verdict": "ELITE | STRONG | MODERATE | WEAK | SKIP",
+  "reasoning": "short explanation",
+  "tags": ["clearance", "overstock", "high_demand", "low_stock"]
+}}
+"""
 
-    # -------------------------
-    # VALUE SIGNAL
-    # -------------------------
-    price = row.get("price", 0)
-    original = row.get("original_price", price)
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You return only JSON."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.2
+        )
 
-    if original > 0 and price < original * 0.6:
-        score += 25
-        reasons.append("💰 Below 60% of original price")
+        return json.loads(response.choices[0].message.content)
 
-    return {
-        "ai_score": min(score, 100),
-        "reasons": reasons
-    }
+    except Exception as e:
+        return {
+            "score": 0,
+            "verdict": "ERROR",
+            "reasoning": str(e),
+            "tags": []
+        }
 
 
-def enrich_dataframe(df):
+def enrich_with_gpt(df):
 
     df = df.copy()
 
-    ai_scores = []
-    ai_reasons = []
+    scores = []
+    verdicts = []
+    reasons = []
+    tags = []
 
     for _, row in df.iterrows():
         result = analyze_deal(row)
-        ai_scores.append(result["ai_score"])
-        ai_reasons.append(" | ".join(result["reasons"]))
 
-    df["ai_score"] = ai_scores
-    df["ai_reasons"] = ai_reasons
+        scores.append(result.get("score", 0))
+        verdicts.append(result.get("verdict", "UNKNOWN"))
+        reasons.append(result.get("reasoning", ""))
+        tags.append(",".join(result.get("tags", [])))
+
+    df["gpt_score"] = scores
+    df["gpt_verdict"] = verdicts
+    df["gpt_reasoning"] = reasons
+    df["gpt_tags"] = tags
 
     return df
