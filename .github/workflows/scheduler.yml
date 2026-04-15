@@ -1,39 +1,44 @@
-name: Run ML
+name: Retail ML Scheduler
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "*/30 * * * *"  # runs every 30 minutes
 
 jobs:
-  run:
+  run-scheduler:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: write
+    # ✅ THIS IS CRITICAL (fixes your BOT_TOKEN missing issue)
+    env:
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      CHAT_ID: ${{ secrets.CHAT_ID }}
 
     steps:
-      - name: Checkout repo
+      # =========================
+      # 1. Checkout code
+      # =========================
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      # =========================
+      # 2. Set up Python
+      # =========================
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
+      # =========================
+      # 3. Install dependencies
+      # =========================
       - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run pipeline
-        run: python scheduler.py
-
-      - name: Force update data (FIX PUSH ISSUE)
         run: |
-          git config --global user.name "bot"
-          git config --global user.email "bot@users.noreply.github.com"
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-          git add data.csv
-          git commit -m "update data" || echo "no changes"
-
-          # FORCE PUSH (this fixes your error permanently)
-          git push origin HEAD:main --force
+      # =========================
+      # 4. Run scheduler
+      # =========================
+      - name: Run scheduler
+        run: python scheduler.py
