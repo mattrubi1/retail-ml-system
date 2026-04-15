@@ -10,12 +10,11 @@ def predict(df):
     df["velocity"] = pd.to_numeric(df["velocity"], errors="coerce").fillna(0)
     df["stock_qty"] = pd.to_numeric(df["stock_qty"], errors="coerce").fillna(0)
 
-    # IMPROVED SCORING (more realistic)
     df["ml_score"] = (
-        df["drop_pct"] * 2.0 +
-        df["velocity"] * 8 +
-        (30 - df["stock_qty"]) * 1.5 +
-        (100 - df["price"]) * 0.2
+        df["drop_pct"] * 2.2 +
+        df["velocity"] * 7 +
+        (25 - df["stock_qty"]) * 1.3 +
+        (100 - df["price"]) * 0.15
     )
 
     return df
