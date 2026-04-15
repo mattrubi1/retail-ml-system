@@ -3,7 +3,6 @@ import pandas as pd
 import random
 
 from ml_engine import predict
-from openai_engine import enrich_with_gpt  # keep if you still use GPT layer
 from utils import generate_sku, normalize_sku
 from alerts import send_alert
 
@@ -44,7 +43,7 @@ def generate_data():
         store_id = random.choice(list(STORE_MAP.keys()))
 
         original_price = base_price + random.randint(10, 80)
-        drop_pct = random.randint(5, 80)  # expanded range for visibility
+        drop_pct = random.randint(5, 80)
 
         price = round(original_price * (1 - drop_pct / 100), 2)
 
@@ -70,26 +69,19 @@ df = generate_data()
 
 df = predict(df)
 
-# OPTIONAL GPT LAYER (safe if enabled)
-try:
-    df = enrich_with_gpt(df)
-except:
-    pass
-
-
 df.to_csv(DATA_PATH, index=False, encoding="utf-8")
 
 print("DEBUG: Generated rows =", len(df))
 
 
 # =========================
-# FULL INVENTORY FILTER (20%+)
+# FULL INVENTORY MODE (20%+)
 # =========================
 deals = df[df["drop_pct"] >= 20].sort_values("drop_pct", ascending=False)
 
 
 # =========================
-# TELEGRAM MESSAGE BUILD
+# TELEGRAM MESSAGE
 # =========================
 message = "🚨 FULL STORE DISCOUNT INTELLIGENCE (20%+ ALL ITEMS)\n\n"
 
@@ -105,9 +97,6 @@ for _, row in deals.iterrows():
 📦 Stock: {row['stock_qty']}
 
 🧠 ML Score: {row['ml_score']}
-🤖 GPT Score: {row.get('gpt_score', 'N/A')}
-
-💡 Insight: {row.get('gpt_reasoning', 'No AI analysis')}
 
 ----------------------
 """
@@ -115,4 +104,4 @@ for _, row in deals.iterrows():
 
 send_alert(message)
 
-print("✅ Full Inventory Mode Finished")
+print("✅ Scheduler finished successfully")
