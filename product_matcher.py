@@ -3,9 +3,7 @@ from bs4 import BeautifulSoup
 import urllib.parse
 
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0"
-}
+HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 
 def search_web(query):
@@ -41,11 +39,7 @@ def match_product(item_name: str):
     results = search_web(item_name)
 
     if not results:
-        return {
-            "title": None,
-            "url": None,
-            "confidence": 0
-        }
+        return {"title": None, "url": None, "confidence": 0}
 
     best = results[0]
 
