@@ -29,20 +29,25 @@ def send_alert(message):
     # =========================
     chunks = []
 
-    while len(message) > MAX_LENGTH:
-        split_index = message[:MAX_LENGTH].rfind("\n")
+    temp_message = message
+
+    while len(temp_message) > MAX_LENGTH:
+        split_index = temp_message[:MAX_LENGTH].rfind("\n")
         if split_index == -1:
             split_index = MAX_LENGTH
 
-        chunks.append(message[:split_index])
-        message = message[split_index:]
+        chunks.append(temp_message[:split_index])
+        temp_message = temp_message[split_index:]
 
-    chunks.append(message)
+    chunks.append(temp_message)
+
+    print(f"DEBUG: Sending {len(chunks)} chunks")
 
     # =========================
-    # SEND CHUNKS
+    # SEND EACH CHUNK
     # =========================
     for i, chunk in enumerate(chunks):
+
         payload = {
             "chat_id": chat_id,
             "text": chunk
@@ -52,7 +57,7 @@ def send_alert(message):
             response = requests.post(url, data=payload)
 
             if response.status_code == 200:
-                print(f"✅ Telegram chunk {i+1}/{len(chunks)} sent")
+                print(f"✅ Chunk {i+1}/{len(chunks)} sent")
             else:
                 print("❌ Telegram failed:", response.text)
 
