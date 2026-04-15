@@ -40,7 +40,7 @@ def generate_data():
         name, base_price = random.choice(ITEMS)
         store_id = random.choice(list(STORE_MAP.keys()))
 
-        original_price = base_price + random.randint(10, 80)
+        original_price = base_price + random.randint(10, 60)
         drop_pct = random.randint(20, 100)
 
         price = round(original_price * (1 - drop_pct / 100), 2)
@@ -71,29 +71,29 @@ df = predict(df)
 
 df.to_csv(DATA_PATH, index=False)
 
-print("DEBUG rows:", len(df))
+print("Rows:", len(df))
 
 
 deals = df[df["drop_pct"] >= 20].sort_values("drop_pct", ascending=False)
 
 
 def chunk(text, limit=3500):
-    chunks = []
-    current = ""
+    parts = []
+    cur = ""
 
     for line in text.split("\n"):
-        if len(current) + len(line) > limit:
-            chunks.append(current)
-            current = ""
-        current += line + "\n"
+        if len(cur) + len(line) > limit:
+            parts.append(cur)
+            cur = ""
+        cur += line + "\n"
 
-    if current:
-        chunks.append(current)
+    if cur:
+        parts.append(cur)
 
-    return chunks
+    return parts
 
 
-message = "🚀 RETAIL INTELLIGENCE ENGINE\n\n"
+message = "🚀 RETAIL DEAL ENGINE\n\n"
 
 for _, row in deals.iterrows():
 
@@ -108,20 +108,21 @@ for _, row in deals.iterrows():
 
 🧠 ML Score: {row['ml_score']}
 
-🔎 HD MATCH: {row['hd_title'] or 'None'}
-🌐 {row['hd_url'] or 'None'}
+🔎 HD MATCH: {row['hd_title']}
+🌐 {row['hd_url']}
 🎯 Confidence: {row['hd_confidence']}
 
 ----------------------
 """
 
 
-sent = False
+sent_once = False
 
-if not sent:
+if not sent_once:
+
     for part in chunk(message):
         send_alert(part)
 
-    sent = True
+    sent_once = True
 
 print("DONE")
