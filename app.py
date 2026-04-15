@@ -2,49 +2,31 @@ import streamlit as st
 import pandas as pd
 import os
 
-st.set_page_config(page_title="Retail AI Intelligence", layout="wide")
+st.set_page_config(page_title="GPT Deal Engine", layout="wide")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(BASE_DIR, "data", "current.csv")
 
 df = pd.read_csv(DATA_PATH)
 
-df["ml_score"] = pd.to_numeric(df.get("ml_score", 0), errors="coerce").fillna(0)
+st.title("🤖 GPT-Level Retail Intelligence System")
 
-if "ai_score" not in df.columns:
-    df["ai_score"] = 0
+if "gpt_score" not in df.columns:
+    st.warning("Run scheduler first")
+    st.stop()
 
-st.title("🧠 Retail AI Deal Engine")
+df = df[df["gpt_score"] >= 80]
 
-# =========================
-# FILTERS
-# =========================
-st.sidebar.header("Filters")
-min_score = st.sidebar.slider("Min ML Score", 0, 100, 80)
+st.subheader("🔥 Elite GPT Deals")
 
-df = df[df["ml_score"] >= min_score]
+st.dataframe(df, width="stretch")
 
-# =========================
-# TOP DEALS
-# =========================
-st.subheader("🔥 Elite Deals")
+st.subheader("🧠 Score Comparison")
 
-top = df.sort_values("ml_score", ascending=False).head(20)
+st.bar_chart(df[["ml_score", "ai_score", "gpt_score"]])
 
-st.dataframe(top, width="stretch")
+st.subheader("🚀 Verdict Breakdown")
 
-# =========================
-# ML + AI COMPARISON
-# =========================
-st.subheader("📊 Score Comparison")
+st.bar_chart(df["gpt_verdict"].value_counts())
 
-st.bar_chart(top[["ml_score", "ai_score"]])
-
-# =========================
-# STORE VIEW
-# =========================
-st.subheader("🏬 Store Activity")
-
-st.bar_chart(df["store_name"].value_counts())
-
-st.success("AI Deal Engine Active 🤖")
+st.success("GPT Intelligence Active 🤖")
