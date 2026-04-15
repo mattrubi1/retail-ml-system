@@ -1,83 +1,36 @@
 import pandas as pd
-import numpy as np
-from sklearn.ensemble import RandomForestClassifier
-
-MODEL = None
 
 
 # =========================
-# TRAIN MODEL
+# "TRAIN MODEL" (NO-OP SAFE)
 # =========================
 def train_model(df):
-
-    global MODEL
-
-    df = df.copy()
-
-    if len(df) < 5:
-        MODEL = None
-        return
-
-    # =========================
-    # SYNTHETIC LABEL (BOOTSTRAP LEARNING)
-    # =========================
-    # High value deal definition (initial training signal)
-    df["label"] = np.where(
-        (df["drop_pct"] > 40) & (df["price"] < 50),
-        1,
-        0
-    )
-
-    features = ["price", "drop_pct", "velocity", "feature_score"]
-
-    for col in features:
-        if col not in df.columns:
-            df[col] = 0
-
-    X = df[features]
-    y = df["label"]
-
-    model = RandomForestClassifier(
-        n_estimators=100,
-        random_state=42
-    )
-
-    model.fit(X, y)
-
-    MODEL = model
+    # No training needed (lightweight system)
+    return None
 
 
 # =========================
-# PREDICT (FIXED PROBABILITY SCORING)
+# LIGHTWEIGHT ML PREDICTION
 # =========================
 def predict(df):
 
-    global MODEL
-
     df = df.copy()
 
-    features = ["price", "drop_pct", "velocity", "feature_score"]
-
-    for col in features:
-        if col not in df.columns:
-            df[col] = 0
-
-    X = df[features]
+    # ensure numeric
+    df["price"] = pd.to_numeric(df.get("price", 0), errors="coerce").fillna(0)
+    df["drop_pct"] = pd.to_numeric(df.get("drop_pct", 0), errors="coerce").fillna(0)
+    df["velocity"] = pd.to_numeric(df.get("velocity", 0), errors="coerce").fillna(0)
 
     # =========================
-    # FALLBACK MODE (NO MODEL)
+    # SIMPLE ML SCORING MODEL
     # =========================
-    if MODEL is None:
-        # safe bounded score (0–100)
-        df["ml_score"] = (df["feature_score"] % 100).clip(0, 100)
-        return df
+    df["ml_score"] = (
+        df["drop_pct"] * 1.5 +     # bigger drop = higher score
+        (100 - df["price"]) * 0.3 + # cheaper = better
+        df["velocity"] * 10        # faster movement = better
+    )
 
-    # =========================
-    # REAL ML PROBABILITY OUTPUT
-    # =========================
-    probs = MODEL.predict_proba(X)[:, 1]
-
-    # normalize to 0–100
-    df["ml_score"] = (probs * 100).clip(0, 100)
+    # normalize (0–100 range)
+    df["ml_score"] = df["ml_score"].clip(lower=0)
 
     return df
