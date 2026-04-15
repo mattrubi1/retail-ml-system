@@ -7,9 +7,6 @@ from utils import generate_sku, normalize_sku
 from alerts import send_alert
 
 
-# =========================
-# ABSOLUTE PATH (CRITICAL FIX)
-# =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 DATA_PATH = os.path.join(DATA_DIR, "current.csv")
@@ -17,9 +14,6 @@ DATA_PATH = os.path.join(DATA_DIR, "current.csv")
 os.makedirs(DATA_DIR, exist_ok=True)
 
 
-# =========================
-# STORE MAP
-# =========================
 STORE_MAP = {
     "1280": "Home Depot - Farmingdale, NY",
     "6170": "Home Depot - Patchogue, NY",
@@ -27,9 +21,6 @@ STORE_MAP = {
 }
 
 
-# =========================
-# PRODUCTS
-# =========================
 ITEMS = [
     ("Milwaukee Drill", 120),
     ("DeWalt Impact Driver", 180),
@@ -42,9 +33,6 @@ ITEMS = [
 ]
 
 
-# =========================
-# GENERATE DATA
-# =========================
 def generate_data():
 
     rows = []
@@ -56,7 +44,6 @@ def generate_data():
 
         original_price = base_price + random.randint(10, 80)
         drop_pct = random.randint(5, 60)
-
         price = round(original_price * (1 - drop_pct / 100), 2)
 
         rows.append({
@@ -74,35 +61,21 @@ def generate_data():
     return pd.DataFrame(rows)
 
 
-# =========================
-# RUN PIPELINE
-# =========================
 df = generate_data()
-print("DEBUG: Generated rows =", len(df))
-
 df = predict(df)
-print("DEBUG: ML scoring applied")
 
-
-# =========================
-# SAVE CSV (FORCE WRITE)
-# =========================
 df.to_csv(DATA_PATH, index=False, encoding="utf-8")
 
 print("🔥 FILE EXISTS:", os.path.exists(DATA_PATH))
 print("🔥 FILE SIZE:", os.path.getsize(DATA_PATH))
 
 
-# =========================
-# TELEGRAM ALERTS
-# =========================
-try:
-    top = df.sort_values("ml_score", ascending=False).head(100)
+top = df.sort_values("ml_score", ascending=False).head(20)
 
-    message = "🚨 RETAIL INTELLIGENCE ALERT\n\n"
+message = "🚨 RETAIL INTELLIGENCE ALERT\n\n"
 
-    for _, row in top.iterrows():
-        message += f"""
+for _, row in top.iterrows():
+    message += f"""
 📦 {row['item_name']}
 🏷 SKU: {normalize_sku(row['sku'])}
 🏬 {row['store_name']}
@@ -114,11 +87,6 @@ try:
 ----------------------
 """
 
-    send_alert(message)
-    print("✅ Telegram sent")
-
-except Exception as e:
-    print("⚠️ Telegram failed:", e)
-
+send_alert(message)
 
 print("✅ Scheduler finished")
