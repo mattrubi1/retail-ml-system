@@ -5,7 +5,7 @@ import random
 from ml_engine import predict
 from utils import generate_store_sku, normalize_sku
 from alerts import send_alert
-from homedepot_matcher import match_product
+from product_matcher import match_product
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -44,8 +44,7 @@ def generate_data():
         store_id = random.choice(list(STORE_MAP.keys()))
 
         original_price = base_price + random.randint(10, 80)
-
-        drop_pct = random.randint(0, 100)
+        drop_pct = random.randint(20, 100)  # enforce real deals only
 
         price = round(original_price * (1 - drop_pct / 100), 2)
         price = max(price, 0)
@@ -54,6 +53,7 @@ def generate_data():
 
         rows.append({
             "sku": generate_store_sku(name, store_id),
+
             "item_name": name,
             "price": price,
             "original_price": original_price,
@@ -62,7 +62,6 @@ def generate_data():
             "stock_qty": random.randint(0, 30),
             "store_name": STORE_MAP[store_id],
 
-            # REAL HOME DEPOT MATCH
             "hd_title": match["title"],
             "hd_url": match["url"],
             "hd_confidence": match["confidence"]
@@ -75,7 +74,6 @@ def generate_data():
 # PIPELINE
 # =========================
 df = generate_data()
-
 df = predict(df)
 
 df.to_csv(DATA_PATH, index=False, encoding="utf-8")
@@ -84,13 +82,13 @@ print("DEBUG: rows =", len(df))
 
 
 # =========================
-# FILTER (20%+ DEALS)
+# FILTER DEALS
 # =========================
 deals = df[df["drop_pct"] >= 20].sort_values("drop_pct", ascending=False)
 
 
 # =========================
-# TELEGRAM SAFE CHUNKING
+# TELEGRAM CHUNK ENGINE
 # =========================
 def chunk(text, limit=3500):
     chunks = []
@@ -108,7 +106,7 @@ def chunk(text, limit=3500):
     return chunks
 
 
-message = "🚨 REAL HOME DEPOT DEAL INTELLIGENCE ENGINE\n\n"
+message = "🚀 ENTERPRISE RETAIL INTELLIGENCE ENGINE (v1)\n\n"
 
 for _, row in deals.iterrows():
 
@@ -134,4 +132,4 @@ for _, row in deals.iterrows():
 for part in chunk(message):
     send_alert(part)
 
-print("✅ Real Home Depot Matching Engine Running")
+print("✅ Enterprise Retail Intelligence Engine Running")
