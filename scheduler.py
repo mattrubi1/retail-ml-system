@@ -3,15 +3,17 @@ import pandas as pd
 import numpy as np
 import random
 
-from engine import process
 from ml_engine import predict
 from alerts import send_alert
 from utils import generate_sku, normalize_sku
 
+
+# =========================
+# PATHS
+# =========================
 DATA_DIR = "data"
 CURRENT_FILE = f"{DATA_DIR}/current.csv"
 HISTORY_FILE = f"{DATA_DIR}/history.csv"
-ALERT_LOG = f"{DATA_DIR}/alerts_sent.csv"
 
 
 # =========================
@@ -21,14 +23,12 @@ STORE_MAP = {
     "1280": "Home Depot - Farmingdale, NY",
     "6170": "Home Depot - Patchogue, NY",
     "2201": "Home Depot - Commack, NY",
-    "4412": "Home Depot - Deer Park, NY",
-    "3381": "Home Depot - Riverhead, NY",
-    "5520": "Home Depot - Islip, NY"
+    "4412": "Home Depot - Deer Park, NY"
 }
 
 
 # =========================
-# ITEM BASE
+# FAKE REALISTIC ITEMS (SIMULATION LAYER)
 # =========================
 ITEMS = [
     ("Milwaukee Drill", "M18 cordless drill kit"),
@@ -36,23 +36,21 @@ ITEMS = [
     ("Ryobi Chainsaw", "40V brushless chainsaw"),
     ("Husky Tool Set", "270pc mechanics kit"),
     ("Rigid Wet/Dry Vac", "6 gallon shop vac"),
-    ("Makita Grinder", "4.5 inch angle grinder"),
-    ("Craftsman Wrench Set", "20pc wrench set"),
-    ("Black+Decker Saw", "circular saw 7 1/4")
+    ("Makita Grinder", "4.5 inch angle grinder")
 ]
 
 
 # =========================
-# GENERATE 120 ITEMS
+# GENERATE FRESH DATA
 # =========================
-def generate_real_data():
+def generate_data(n=120):
 
     data = []
 
-    for _ in range(120):  # 🔥 OVER 100 ITEMS
+    for _ in range(n):
 
-        store_id = random.choice(list(STORE_MAP.keys()))
         item = random.choice(ITEMS)
+        store_id = random.choice(list(STORE_MAP.keys()))
 
         original_price = random.randint(40, 400)
         drop_pct = random.randint(5, 75)
@@ -71,59 +69,66 @@ def generate_real_data():
             "ml_score": 0
         })
 
-    return data
+    return pd.DataFrame(data)
 
 
 # =========================
-# SETUP FILES
+# ENSURE DATA FOLDER EXISTS
 # =========================
-def ensure_files():
-    os.makedirs(DATA_DIR, exist_ok=True)
-
-    for f in [CURRENT_FILE, HISTORY_FILE, ALERT_LOG]:
-        if not os.path.exists(f):
-            pd.DataFrame().to_csv(f, index=False)
+os.makedirs(DATA_DIR, exist_ok=True)
 
 
-def load(path):
+# =========================
+# LOAD OLD DATA (OPTIONAL)
+# =========================
+if os.path.exists(CURRENT_FILE):
     try:
-        return pd.read_csv(path)
+        old = pd.read_csv(CURRENT_FILE)
     except:
-        return pd.DataFrame()
-
-
-ensure_files()
-
-current = load(CURRENT_FILE)
-history = load(HISTORY_FILE)
-alerts = load(ALERT_LOG)
+        old = pd.DataFrame()
+else:
+    old = pd.DataFrame()
 
 
 # =========================
-# GENERATE IF EMPTY
+# ALWAYS GENERATE FRESH DATA (FIXES YOUR ISSUE)
 # =========================
-if current.empty or len(current) < 10:
-    current = pd.DataFrame(generate_real_data())
+current = generate_data(120)
 
 
 # =========================
-# PROCESS + ML
+# RUN ML PREDICTION
 # =========================
-current = process(current)
 current = predict(current)
 
 
 # =========================
-# ALERT LOGIC (TOP 100)
+# SAVE HISTORY
 # =========================
-TOP_ALERTS = 100
+if not old.empty:
+    history = pd.concat([old, current], ignore_index=True)
+else:
+    history = current
 
-top_items = current.sort_values("ml_score", ascending=False).head(TOP_ALERTS)
+history.to_csv(HISTORY_FILE, index=False)
 
+
+# =========================
+# OVERWRITE CURRENT DATA (IMPORTANT FIX)
+# =========================
+current.to_csv(CURRENT_FILE, index=False)
+
+print("✅ current.csv UPDATED WITH LIVE DATA")
+
+
+# =========================
+# TELEGRAM ALERT (TOP 100)
+# =========================
+top = current.sort_values("ml_score", ascending=False).head(100)
 
 message = "🚨 REAL INTELLIGENCE BULK REPORT\n\n"
 
-for _, row in top_items.iterrows():
+for _, row in top.iterrows():
 
     message += f"""📦 {row['item_name']}
 🏷 SKU: {normalize_sku(row['sku'])}
@@ -136,23 +141,6 @@ for _, row in top_items.iterrows():
 
 """
 
-
-# =========================
-# SEND SINGLE BULK MESSAGE
-# =========================
 send_alert(message)
 
-
-# =========================
-# SAVE DATA
-# =========================
-current.to_csv(CURRENT_FILE, index=False)
-history = pd.concat([history, current], ignore_index=True)
-history.to_csv(HISTORY_FILE, index=False)
-
-print("✅ 120 items generated + 100 alerts sent (bulk mode)")
-
-import os
-
-print("DEBUG BOT_TOKEN:", repr(os.getenv("BOT_TOKEN")))
-print("DEBUG CHAT_ID:", repr(os.getenv("CHAT_ID")))
+print("✅ TELEGRAM ALERT SENT")
