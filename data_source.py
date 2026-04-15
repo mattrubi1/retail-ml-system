@@ -1,36 +1,24 @@
 import requests
 import re
+import urllib.parse
 import time
 
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 
-TOOLS_CATEGORIES = [
-    # Power Tools
-    "https://www.homedepot.com/b/Tools-Power-Tools/N-5yc1vZc298",
-    "https://www.homedepot.com/b/Tools-Power-Drills/N-5yc1vZc299",
-    "https://www.homedepot.com/b/Tools-Saws/N-5yc1vZc2a1",
-    "https://www.homedepot.com/b/Tools-Impact-Wrenches/N-5yc1vZc2a2",
-
-    # Hand Tools
-    "https://www.homedepot.com/b/Tools-Hand-Tools/N-5yc1vZc1xy",
-    "https://www.homedepot.com/b/Tools-Hammers/N-5yc1vZc1xz",
-    "https://www.homedepot.com/b/Tools-Wrenches/N-5yc1vZc1y0",
-
-    # Outdoor Power Equipment
-    "https://www.homedepot.com/b/Outdoors-Outdoor-Power-Equipment/N-5yc1vZbx8t",
-    "https://www.homedepot.com/b/Outdoors-Lawn-Mowers/N-5yc1vZbx8u",
-    "https://www.homedepot.com/b/Outdoors-Leaf-Blowers/N-5yc1vZbx8v",
-
-    # Tool Storage
-    "https://www.homedepot.com/b/Tools-Tool-Storage/N-5yc1vZc1xw",
+SEARCH_TERMS = [
+    "drill",
+    "impact driver",
+    "circular saw",
+    "chainsaw",
+    "wet dry vac",
+    "tool set",
+    "grinder",
+    "leaf blower"
 ]
 
 
 def extract_products(html):
-    """
-    Pull product URLs from category page HTML
-    """
 
     matches = re.findall(r"https://www\.homedepot\.com/p/[^\s\"']+", html)
 
@@ -43,62 +31,50 @@ def extract_products(html):
     return cleaned
 
 
-def crawl_category(url, pages=5):
+def fetch_products():
 
-    results = []
+    all_products = []
 
-    for page in range(1, pages + 1):
+    for term in SEARCH_TERMS:
 
         try:
-            paged_url = f"{url}?Nao={page * 24}"
-            print(f"Scraping: {paged_url}")
+            query = urllib.parse.quote(term)
 
-            r = requests.get(paged_url, headers=HEADERS, timeout=10)
+            # IMPORTANT: use REAL search endpoint (not category pages)
+            url = f"https://www.homedepot.com/s/{query}"
+
+            print(f"Searching: {term}")
+
+            r = requests.get(url, headers=HEADERS, timeout=10)
 
             if r.status_code != 200:
-                print("Blocked or error:", r.status_code)
+                print("Blocked:", r.status_code)
                 continue
 
             products = extract_products(r.text)
 
             if not products:
-                print("No products found — stopping pagination")
-                break
+                print(f"No products found for: {term}")
 
-            results.extend(products)
+            for p in products[:20]:
 
-            time.sleep(1.2)
+                name = p.split("/")[-1].replace("-", " ")
+
+                all_products.append({
+                    "name": name.title(),
+                    "url": p.split("?")[0]
+                })
+
+            time.sleep(1)
 
         except Exception as e:
             print("ERROR:", e)
-
-    return results
-
-
-def fetch_products():
-
-    all_products = []
-
-    for cat in TOOLS_CATEGORIES:
-
-        print(f"\nCATEGORY START: {cat}")
-
-        urls = crawl_category(cat, pages=3)
-
-        for u in urls:
-
-            name = u.split("/")[-1].replace("-", " ")
-
-            all_products.append({
-                "name": name.title(),
-                "url": u
-            })
 
     # deduplicate
     unique = {p["url"]: p for p in all_products}
 
     final = list(unique.values())
 
-    print("\nTOTAL UNIQUE PRODUCTS:", len(final))
+    print("TOTAL PRODUCTS:", len(final))
 
     return final
