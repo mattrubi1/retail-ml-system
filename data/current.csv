@@ -1,121 +1,121 @@
 sku,item_name,price,original_price,drop_pct,velocity,stock_qty,store_name,hd_title,hd_url,hd_confidence,ml_score
-SKU-52c-cdf-072,Milwaukee Drill,93.59,191,51,9,21,"Home Depot - Farmingdale, NY",,,0,57.3
-SKU-0a9-d56-9b7,Rigid Wet/Dry Vac,137.6,160,14,10,12,"Home Depot - Commack, NY",,,0,39.41
-SKU-b8c-3ab-3eb,Ryobi Blower,11.88,132,91,4,18,"Home Depot - Patchogue, NY",,,0,71.96
-SKU-5b9-3e8-bec,DeWalt Saw,76.68,284,73,5,28,"Home Depot - Patchogue, NY",,,0,59.97
-SKU-fc9-744-90d,Makita Grinder,161.09,181,11,8,18,"Home Depot - Patchogue, NY",,,0,30.05
-SKU-1aa-e50-b00,Makita Grinder,89.04,212,58,5,23,"Home Depot - Farmingdale, NY",,,0,51.04
-SKU-94f-07b-14d,DeWalt Impact Driver,214.2,255,16,5,2,"Home Depot - Commack, NY",,,0,32.17
-SKU-044-3ba-d60,DeWalt Impact Driver,79.86,242,67,8,30,"Home Depot - Patchogue, NY",,,0,63.58
-SKU-177-154-010,Ryobi Chainsaw,58.87,203,71,9,22,"Home Depot - Farmingdale, NY",,,0,69.88
-SKU-b8c-3ab-3eb,Ryobi Blower,21.59,127,83,9,0,"Home Depot - Patchogue, NY",,,0,86.48
-SKU-cc2-ff5-123,Ryobi Chainsaw,43.74,162,73,7,13,"Home Depot - Patchogue, NY",,,0,69.78
-SKU-94f-07b-14d,DeWalt Impact Driver,249.0,249,0,9,20,"Home Depot - Commack, NY",,,0,24.58
-SKU-fc7-388-8af,Milwaukee Drill,0.0,156,100,6,12,"Home Depot - Commack, NY",,,0,85.2
-SKU-f5b-a28-473,Rigid Wet/Dry Vac,23.38,167,86,4,22,"Home Depot - Farmingdale, NY",,,0,67.12
-SKU-705-c12-c1d,Husky Tool Set,94.3,115,18,10,0,"Home Depot - Farmingdale, NY",,,0,46.84
-SKU-94f-07b-14d,DeWalt Impact Driver,152.0,200,24,2,1,"Home Depot - Commack, NY",,,0,30.28
-SKU-044-3ba-d60,DeWalt Impact Driver,227.36,232,2,1,21,"Home Depot - Patchogue, NY",,,0,5.48
-SKU-705-c12-c1d,Husky Tool Set,94.16,107,12,8,0,"Home Depot - Farmingdale, NY",,,0,37.96
-SKU-1e6-99f-708,Rigid Wet/Dry Vac,118.34,122,3,3,22,"Home Depot - Patchogue, NY",,,0,10.81
-SKU-0a9-d56-9b7,Rigid Wet/Dry Vac,74.4,155,52,7,6,"Home Depot - Commack, NY",,,0,58.96
-SKU-7ac-40a-9ae,Ryobi Blower,93.96,116,19,2,17,"Home Depot - Commack, NY",,,0,20.69
-SKU-b8c-3ab-3eb,Ryobi Blower,103.55,109,5,3,19,"Home Depot - Patchogue, NY",,,0,13.32
-SKU-95e-a50-86d,Ryobi Blower,41.6,104,60,4,25,"Home Depot - Farmingdale, NY",,,0,49.08
-SKU-62c-2d3-da2,DeWalt Saw,88.06,259,66,1,11,"Home Depot - Farmingdale, NY",,,0,51.03
-SKU-705-c12-c1d,Husky Tool Set,58.5,117,50,7,24,"Home Depot - Farmingdale, NY",,,0,50.48
-SKU-4cd-f55-c46,Milwaukee Drill,44.5,178,75,2,12,"Home Depot - Patchogue, NY",,,0,58.98
-SKU-95e-a50-86d,Ryobi Blower,54.52,116,53,7,14,"Home Depot - Farmingdale, NY",,,0,56.43
-SKU-350-7de-fd0,Husky Tool Set,109.76,112,2,7,28,"Home Depot - Commack, NY",,,0,18.97
-SKU-1aa-e50-b00,Makita Grinder,18.0,200,91,8,15,"Home Depot - Farmingdale, NY",,,0,83.16
-SKU-772-81d-e83,Makita Grinder,222.13,229,3,9,21,"Home Depot - Commack, NY",,,0,26.13
-SKU-52c-cdf-072,Milwaukee Drill,42.0,168,75,3,30,"Home Depot - Farmingdale, NY",,,0,56.28
-SKU-b8c-3ab-3eb,Ryobi Blower,48.98,158,69,6,8,"Home Depot - Patchogue, NY",,,0,66.69
-SKU-95e-a50-86d,Ryobi Blower,124.2,135,8,2,8,"Home Depot - Farmingdale, NY",,,0,17.14
-SKU-4cd-f55-c46,Milwaukee Drill,30.77,181,83,9,6,"Home Depot - Patchogue, NY",,,0,84.07
-SKU-350-7de-fd0,Husky Tool Set,33.66,153,78,10,18,"Home Depot - Commack, NY",,,0,78.53
-SKU-f10-f2f-909,DeWalt Impact Driver,139.16,196,29,2,15,"Home Depot - Farmingdale, NY",,,0,27.92
-SKU-fc7-388-8af,Milwaukee Drill,33.81,161,79,1,9,"Home Depot - Commack, NY",,,0,60.28
-SKU-b8c-3ab-3eb,Ryobi Blower,31.9,145,78,7,12,"Home Depot - Patchogue, NY",,,0,73.43
-SKU-705-c12-c1d,Husky Tool Set,34.5,138,75,7,20,"Home Depot - Farmingdale, NY",,,0,68.29
-SKU-f10-f2f-909,DeWalt Impact Driver,199.08,237,16,8,13,"Home Depot - Farmingdale, NY",,,0,35.27
-SKU-62c-2d3-da2,DeWalt Saw,127.68,228,44,2,18,"Home Depot - Farmingdale, NY",,,0,36.45
-SKU-f10-f2f-909,DeWalt Impact Driver,106.65,237,55,3,17,"Home Depot - Farmingdale, NY",,,0,46.49
-SKU-b8c-3ab-3eb,Ryobi Blower,114.68,122,6,1,8,"Home Depot - Patchogue, NY",,,0,13.35
-SKU-5b9-3e8-bec,DeWalt Saw,148.2,285,48,8,1,"Home Depot - Patchogue, NY",,,0,60.84
-SKU-a74-749-16c,DeWalt Saw,107.52,224,52,9,3,"Home Depot - Commack, NY",,,0,65.14
-SKU-7ac-40a-9ae,Ryobi Blower,21.14,151,86,4,6,"Home Depot - Commack, NY",,,0,73.52
-SKU-95e-a50-86d,Ryobi Blower,21.42,126,83,6,0,"Home Depot - Farmingdale, NY",,,0,78.98
-SKU-ac4-d67-2a3,Ryobi Chainsaw,156.4,170,8,6,24,"Home Depot - Commack, NY",,,0,20.71
-SKU-1aa-e50-b00,Makita Grinder,173.25,175,1,9,12,"Home Depot - Farmingdale, NY",,,0,28.46
-SKU-044-3ba-d60,DeWalt Impact Driver,24.24,202,88,9,11,"Home Depot - Patchogue, NY",,,0,85.31
-SKU-52c-cdf-072,Milwaukee Drill,146.94,186,21,6,0,"Home Depot - Farmingdale, NY",,,0,38.73
-SKU-5b9-3e8-bec,DeWalt Saw,78.59,271,71,7,1,"Home Depot - Patchogue, NY",,,0,73.27
-SKU-772-81d-e83,Makita Grinder,9.55,191,95,5,16,"Home Depot - Commack, NY",,,0,77.86
-SKU-350-7de-fd0,Husky Tool Set,93.73,103,9,5,23,"Home Depot - Commack, NY",,,0,19.33
-SKU-1aa-e50-b00,Makita Grinder,19.71,219,91,1,5,"Home Depot - Farmingdale, NY",,,0,69.66
-SKU-0a9-d56-9b7,Rigid Wet/Dry Vac,32.5,130,75,6,2,"Home Depot - Commack, NY",,,0,72.99
-SKU-5b9-3e8-bec,DeWalt Saw,152.49,221,31,2,6,"Home Depot - Patchogue, NY",,,0,32.81
-SKU-5b9-3e8-bec,DeWalt Saw,221.76,231,4,9,25,"Home Depot - Patchogue, NY",,,0,25.18
-SKU-044-3ba-d60,DeWalt Impact Driver,129.92,203,36,8,2,"Home Depot - Patchogue, NY",,,0,52.66
-SKU-f5b-a28-473,Rigid Wet/Dry Vac,112.85,185,39,5,6,"Home Depot - Farmingdale, NY",,,0,45.52
-SKU-5b9-3e8-bec,DeWalt Saw,34.05,227,85,6,14,"Home Depot - Patchogue, NY",,,0,74.66
-SKU-4cd-f55-c46,Milwaukee Drill,107.36,176,39,9,4,"Home Depot - Patchogue, NY",,,0,56.32
-SKU-1e6-99f-708,Rigid Wet/Dry Vac,90.16,161,44,6,27,"Home Depot - Patchogue, NY",,,0,43.67
-SKU-fc7-388-8af,Milwaukee Drill,18.48,154,88,3,5,"Home Depot - Commack, NY",,,0,72.72
-SKU-94f-07b-14d,DeWalt Impact Driver,28.49,259,89,1,1,"Home Depot - Commack, NY",,,0,69.96
-SKU-f10-f2f-909,DeWalt Impact Driver,69.6,240,71,7,6,"Home Depot - Farmingdale, NY",,,0,71.27
-SKU-1e6-99f-708,Rigid Wet/Dry Vac,176.7,186,5,7,2,"Home Depot - Patchogue, NY",,,0,30.05
-SKU-a74-749-16c,DeWalt Saw,140.91,231,39,6,0,"Home Depot - Commack, NY",,,0,50.4
-SKU-f5b-a28-473,Rigid Wet/Dry Vac,136.0,170,20,1,24,"Home Depot - Farmingdale, NY",,,0,15.99
-SKU-fc9-744-90d,Makita Grinder,127.65,185,31,6,4,"Home Depot - Patchogue, NY",,,0,43.62
-SKU-fc7-388-8af,Milwaukee Drill,79.43,169,53,4,28,"Home Depot - Commack, NY",,,0,44.51
-SKU-705-c12-c1d,Husky Tool Set,47.7,159,70,4,23,"Home Depot - Farmingdale, NY",,,0,56.34
-SKU-044-3ba-d60,DeWalt Impact Driver,7.68,192,96,7,28,"Home Depot - Patchogue, NY",,,0,79.9
-SKU-f10-f2f-909,DeWalt Impact Driver,45.6,228,80,10,6,"Home Depot - Farmingdale, NY",,,0,84.62
-SKU-f10-f2f-909,DeWalt Impact Driver,215.65,227,5,7,16,"Home Depot - Farmingdale, NY",,,0,24.43
-SKU-705-c12-c1d,Husky Tool Set,128.7,165,22,8,3,"Home Depot - Farmingdale, NY",,,0,43.19
-SKU-ac4-d67-2a3,Ryobi Chainsaw,3.98,199,98,10,12,"Home Depot - Commack, NY",,,0,93.9
-SKU-044-3ba-d60,DeWalt Impact Driver,33.9,226,85,7,21,"Home Depot - Patchogue, NY",,,0,74.36
-SKU-fc7-388-8af,Milwaukee Drill,57.28,179,68,4,24,"Home Depot - Commack, NY",,,0,54.64
-SKU-7ac-40a-9ae,Ryobi Blower,152.46,154,1,1,1,"Home Depot - Commack, NY",,,0,12.88
-SKU-f5b-a28-473,Rigid Wet/Dry Vac,28.4,142,80,7,4,"Home Depot - Farmingdale, NY",,,0,77.93
-SKU-cc2-ff5-123,Ryobi Chainsaw,66.6,185,64,2,3,"Home Depot - Patchogue, NY",,,0,55.44
-SKU-fc7-388-8af,Milwaukee Drill,173.46,177,2,4,25,"Home Depot - Commack, NY",,,0,11.41
-SKU-1aa-e50-b00,Makita Grinder,12.36,206,94,1,16,"Home Depot - Farmingdale, NY",,,0,67.21
-SKU-95e-a50-86d,Ryobi Blower,135.24,161,16,2,17,"Home Depot - Farmingdale, NY",,,0,18.7
-SKU-1aa-e50-b00,Makita Grinder,91.18,194,53,4,16,"Home Depot - Farmingdale, NY",,,0,48.1
-SKU-a74-749-16c,DeWalt Saw,151.8,276,45,8,20,"Home Depot - Commack, NY",,,0,51.29
-SKU-cc2-ff5-123,Ryobi Chainsaw,142.74,183,22,9,13,"Home Depot - Patchogue, NY",,,0,41.68
-SKU-f10-f2f-909,DeWalt Impact Driver,83.25,225,63,4,11,"Home Depot - Farmingdale, NY",,,0,56.58
-SKU-705-c12-c1d,Husky Tool Set,84.32,136,38,1,4,"Home Depot - Farmingdale, NY",,,0,35.69
-SKU-350-7de-fd0,Husky Tool Set,23.76,132,82,2,17,"Home Depot - Commack, NY",,,0,61.53
-SKU-94f-07b-14d,DeWalt Impact Driver,179.4,260,31,3,13,"Home Depot - Commack, NY",,,0,32.5
-SKU-52c-cdf-072,Milwaukee Drill,126.75,195,35,10,7,"Home Depot - Farmingdale, NY",,,0,55.02
-SKU-0a9-d56-9b7,Rigid Wet/Dry Vac,43.56,132,67,4,10,"Home Depot - Commack, NY",,,0,59.6
-SKU-cc2-ff5-123,Ryobi Chainsaw,129.2,170,24,4,0,"Home Depot - Patchogue, NY",,,0,35.69
-SKU-177-154-010,Ryobi Chainsaw,113.46,186,39,6,10,"Home Depot - Farmingdale, NY",,,0,46.42
-SKU-95e-a50-86d,Ryobi Blower,111.55,115,3,8,16,"Home Depot - Farmingdale, NY",,,0,25.72
-SKU-0a9-d56-9b7,Rigid Wet/Dry Vac,161.92,184,12,1,30,"Home Depot - Commack, NY",,,0,10.4
-SKU-7ac-40a-9ae,Ryobi Blower,135.9,151,10,5,30,"Home Depot - Commack, NY",,,0,19.12
-SKU-1e6-99f-708,Rigid Wet/Dry Vac,74.82,129,42,10,15,"Home Depot - Patchogue, NY",,,0,56.39
-SKU-b8c-3ab-3eb,Ryobi Blower,77.0,154,50,6,21,"Home Depot - Patchogue, NY",,,0,49.16
-SKU-fc9-744-90d,Makita Grinder,136.08,216,37,9,5,"Home Depot - Patchogue, NY",,,0,54.61
-SKU-044-3ba-d60,DeWalt Impact Driver,206.48,232,11,10,16,"Home Depot - Patchogue, NY",,,0,35.83
-SKU-1aa-e50-b00,Makita Grinder,119.68,176,32,8,14,"Home Depot - Farmingdale, NY",,,0,45.28
-SKU-f5b-a28-473,Rigid Wet/Dry Vac,131.04,156,16,2,21,"Home Depot - Farmingdale, NY",,,0,17.11
-SKU-4cd-f55-c46,Milwaukee Drill,103.18,154,33,4,30,"Home Depot - Patchogue, NY",,,0,31.54
-SKU-0a9-d56-9b7,Rigid Wet/Dry Vac,106.92,162,34,9,17,"Home Depot - Commack, NY",,,0,47.88
-SKU-044-3ba-d60,DeWalt Impact Driver,93.6,195,52,1,6,"Home Depot - Patchogue, NY",,,0,43.95
-SKU-1e6-99f-708,Rigid Wet/Dry Vac,15.7,157,90,4,5,"Home Depot - Patchogue, NY",,,0,76.51
-SKU-52c-cdf-072,Milwaukee Drill,33.81,161,79,1,16,"Home Depot - Farmingdale, NY",,,0,57.48
-SKU-94f-07b-14d,DeWalt Impact Driver,4.7,235,98,9,13,"Home Depot - Commack, NY",,,0,91.0
-SKU-62c-2d3-da2,DeWalt Saw,102.9,245,58,6,16,"Home Depot - Farmingdale, NY",,,0,56.33
-SKU-f73-41c-c84,Husky Tool Set,124.74,154,19,1,30,"Home Depot - Patchogue, NY",,,0,14.95
-SKU-0a9-d56-9b7,Rigid Wet/Dry Vac,47.1,157,70,8,28,"Home Depot - Commack, NY",,,0,65.54
-SKU-b8c-3ab-3eb,Ryobi Blower,1.07,107,99,1,7,"Home Depot - Patchogue, NY",,,0,74.05
-SKU-350-7de-fd0,Husky Tool Set,63.63,101,37,3,17,"Home Depot - Commack, NY",,,0,34.87
-SKU-62c-2d3-da2,DeWalt Saw,61.02,226,73,10,18,"Home Depot - Farmingdale, NY",,,0,75.27
-SKU-705-c12-c1d,Husky Tool Set,2.22,111,98,4,7,"Home Depot - Farmingdale, NY",,,0,80.9
-SKU-b8c-3ab-3eb,Ryobi Blower,57.35,155,63,8,20,"Home Depot - Patchogue, NY",,,0,63.0
-SKU-fc9-744-90d,Makita Grinder,1.98,198,99,7,3,"Home Depot - Patchogue, NY",,,0,90.65
+2201-RYOBI-613,Ryobi Blower,119.2,149,20,9,27,"Home Depot - Commack, NY",,,0,93.75999999999999
+1280-DEWAL-2532,DeWalt Saw,8.07,269,97,5,23,"Home Depot - Farmingdale, NY",,,0,250.786
+1280-RIGID-4022,Rigid Wet/Dry Vac,61.1,130,53,4,22,"Home Depot - Farmingdale, NY",,,0,147.38
+1280-RYOBI-1163,Ryobi Chainsaw,25.48,182,86,5,7,"Home Depot - Farmingdale, NY",,,0,244.504
+6170-MAKIT-6014,Makita Grinder,25.5,170,85,7,16,"Home Depot - Patchogue, NY",,,0,243.70000000000002
+6170-HUSKY-6623,Husky Tool Set,95.04,144,34,9,10,"Home Depot - Patchogue, NY",,,0,146.992
+2201-MAKIT-6014,Makita Grinder,42.0,210,80,2,12,"Home Depot - Commack, NY",,,0,205.2
+2201-MAKIT-6014,Makita Grinder,99.32,191,48,7,6,"Home Depot - Commack, NY",,,0,166.936
+2201-MAKIT-6014,Makita Grinder,124.56,173,28,7,0,"Home Depot - Commack, NY",,,0,129.088
+1280-DEWAL-1804,DeWalt Impact Driver,107.06,202,47,5,12,"Home Depot - Farmingdale, NY",,,0,144.188
+1280-DEWAL-2532,DeWalt Saw,180.18,231,22,2,30,"Home Depot - Farmingdale, NY",,,0,39.964
+2201-DEWAL-2532,DeWalt Saw,163.43,277,41,6,21,"Home Depot - Commack, NY",,,0,116.114
+2201-RYOBI-613,Ryobi Blower,64.96,116,44,5,7,"Home Depot - Commack, NY",,,0,152.608
+2201-DEWAL-1804,DeWalt Impact Driver,162.14,242,33,3,14,"Home Depot - Commack, NY",,,0,90.772
+1280-RYOBI-613,Ryobi Blower,47.88,114,58,10,27,"Home Depot - Farmingdale, NY",,,0,190.024
+1280-RYOBI-1163,Ryobi Chainsaw,83.07,213,61,10,13,"Home Depot - Farmingdale, NY",,,0,205.786
+2201-DEWAL-1804,DeWalt Impact Driver,31.98,246,87,4,8,"Home Depot - Commack, NY",,,0,238.00400000000002
+1280-RIGID-4022,Rigid Wet/Dry Vac,102.03,179,43,5,11,"Home Depot - Farmingdale, NY",,,0,138.394
+2201-HUSKY-6623,Husky Tool Set,4.65,155,97,7,10,"Home Depot - Commack, NY",,,0,279.07
+6170-RYOBI-613,Ryobi Blower,70.56,126,44,1,7,"Home Depot - Patchogue, NY",,,0,127.488
+2201-RYOBI-613,Ryobi Blower,130.35,165,21,3,12,"Home Depot - Commack, NY",,,0,75.53
+1280-RIGID-4022,Rigid Wet/Dry Vac,81.0,162,50,7,12,"Home Depot - Farmingdale, NY",,,0,167.4
+2201-RYOBI-613,Ryobi Blower,7.15,143,95,5,1,"Home Depot - Commack, NY",,,0,273.37
+1280-RIGID-4022,Rigid Wet/Dry Vac,87.21,171,49,9,14,"Home Depot - Farmingdale, NY",,,0,173.75799999999998
+2201-RYOBI-1163,Ryobi Chainsaw,66.5,190,65,7,10,"Home Depot - Commack, NY",,,0,202.7
+2201-MAKIT-6014,Makita Grinder,53.13,231,77,7,16,"Home Depot - Commack, NY",,,0,222.174
+1280-MAKIT-6014,Makita Grinder,102.34,238,57,2,22,"Home Depot - Farmingdale, NY",,,0,135.132
+1280-MILWA-6459,Milwaukee Drill,155.2,194,20,6,23,"Home Depot - Farmingdale, NY",,,0,73.36000000000001
+2201-RYOBI-1163,Ryobi Chainsaw,10.75,215,95,6,22,"Home Depot - Commack, NY",,,0,253.45
+6170-RYOBI-1163,Ryobi Chainsaw,85.5,190,55,1,2,"Home Depot - Patchogue, NY",,,0,152.5
+6170-MAKIT-6014,Makita Grinder,33.0,220,85,2,28,"Home Depot - Patchogue, NY",,,0,197.8
+6170-DEWAL-2532,DeWalt Saw,50.73,267,81,2,30,"Home Depot - Patchogue, NY",,,0,183.854
+2201-MILWA-6459,Milwaukee Drill,116.18,157,26,3,25,"Home Depot - Commack, NY",,,0,72.764
+6170-DEWAL-1804,DeWalt Impact Driver,130.56,256,49,9,2,"Home Depot - Patchogue, NY",,,0,179.488
+1280-MAKIT-6014,Makita Grinder,67.64,178,62,1,22,"Home Depot - Farmingdale, NY",,,0,146.072
+6170-HUSKY-6623,Husky Tool Set,6.3,105,94,3,9,"Home Depot - Patchogue, NY",,,0,249.94
+2201-RYOBI-613,Ryobi Blower,16.49,97,83,1,12,"Home Depot - Commack, NY",,,0,210.302
+2201-DEWAL-1804,DeWalt Impact Driver,95.2,238,60,8,15,"Home Depot - Commack, NY",,,0,186.96
+2201-RYOBI-613,Ryobi Blower,3.12,104,97,8,12,"Home Depot - Commack, NY",,,0,282.976
+1280-DEWAL-2532,DeWalt Saw,137.25,225,39,5,18,"Home Depot - Farmingdale, NY",,,0,114.95
+1280-DEWAL-2532,DeWalt Saw,94.0,235,60,8,5,"Home Depot - Farmingdale, NY",,,0,199.2
+6170-MAKIT-6014,Makita Grinder,56.1,170,67,5,22,"Home Depot - Patchogue, NY",,,0,182.38
+6170-RIGID-4022,Rigid Wet/Dry Vac,76.14,162,53,7,11,"Home Depot - Patchogue, NY",,,0,175.572
+1280-MILWA-6459,Milwaukee Drill,106.14,174,39,4,15,"Home Depot - Farmingdale, NY",,,0,118.772
+6170-HUSKY-6623,Husky Tool Set,70.4,110,36,1,2,"Home Depot - Patchogue, NY",,,0,117.52
+6170-RYOBI-613,Ryobi Blower,4.32,144,97,3,17,"Home Depot - Patchogue, NY",,,0,246.736
+6170-HUSKY-6623,Husky Tool Set,43.6,109,60,8,14,"Home Depot - Patchogue, NY",,,0,198.48
+1280-HUSKY-6623,Husky Tool Set,52.92,108,51,4,2,"Home Depot - Farmingdale, NY",,,0,169.016
+2201-RYOBI-1163,Ryobi Chainsaw,7.56,189,96,6,26,"Home Depot - Commack, NY",,,0,251.288
+2201-MAKIT-6014,Makita Grinder,49.91,217,77,9,25,"Home Depot - Commack, NY",,,0,224.018
+1280-MAKIT-6014,Makita Grinder,77.22,198,61,1,27,"Home Depot - Farmingdale, NY",,,0,136.156
+1280-HUSKY-6623,Husky Tool Set,99.54,158,37,4,10,"Home Depot - Farmingdale, NY",,,0,122.092
+2201-DEWAL-2532,DeWalt Saw,128.24,229,44,6,0,"Home Depot - Commack, NY",,,0,154.352
+6170-RYOBI-1163,Ryobi Chainsaw,63.6,212,70,4,24,"Home Depot - Patchogue, NY",,,0,178.48
+6170-MAKIT-6014,Makita Grinder,38.88,216,82,4,9,"Home Depot - Patchogue, NY",,,0,225.42399999999998
+6170-HUSKY-6623,Husky Tool Set,44.0,110,60,1,2,"Home Depot - Patchogue, NY",,,0,170.79999999999998
+6170-RYOBI-1163,Ryobi Chainsaw,25.62,183,86,8,13,"Home Depot - Patchogue, NY",,,0,255.276
+6170-RIGID-4022,Rigid Wet/Dry Vac,99.06,127,22,8,23,"Home Depot - Patchogue, NY",,,0,100.58800000000001
+1280-DEWAL-2532,DeWalt Saw,45.72,254,82,10,6,"Home Depot - Farmingdale, NY",,,0,263.656
+2201-RYOBI-1163,Ryobi Chainsaw,4.83,161,97,5,1,"Home Depot - Commack, NY",,,0,277.834
+1280-DEWAL-1804,DeWalt Impact Driver,116.05,211,45,10,6,"Home Depot - Farmingdale, NY",,,0,175.59
+6170-RYOBI-1163,Ryobi Chainsaw,118.25,215,45,2,20,"Home Depot - Patchogue, NY",,,0,110.35
+1280-RIGID-4022,Rigid Wet/Dry Vac,37.38,178,79,3,3,"Home Depot - Farmingdale, NY",,,0,220.924
+1280-RYOBI-1163,Ryobi Chainsaw,49.45,215,77,2,30,"Home Depot - Farmingdale, NY",,,0,176.11
+6170-RIGID-4022,Rigid Wet/Dry Vac,110.2,190,42,1,23,"Home Depot - Patchogue, NY",,,0,96.36
+1280-RYOBI-1163,Ryobi Chainsaw,122.04,226,46,1,19,"Home Depot - Farmingdale, NY",,,0,106.792
+2201-RYOBI-613,Ryobi Blower,34.44,164,79,10,29,"Home Depot - Commack, NY",,,0,232.31199999999998
+6170-RIGID-4022,Rigid Wet/Dry Vac,30.26,178,83,7,0,"Home Depot - Patchogue, NY",,,0,257.948
+2201-MILWA-6459,Milwaukee Drill,52.64,188,72,10,12,"Home Depot - Commack, NY",,,0,235.072
+2201-RYOBI-613,Ryobi Blower,47.25,135,65,3,5,"Home Depot - Commack, NY",,,0,188.55
+2201-RIGID-4022,Rigid Wet/Dry Vac,83.21,157,47,9,11,"Home Depot - Commack, NY",,,0,174.15800000000002
+1280-RYOBI-613,Ryobi Blower,21.75,145,85,5,1,"Home Depot - Farmingdale, NY",,,0,250.45000000000002
+1280-RYOBI-1163,Ryobi Chainsaw,128.03,217,41,7,16,"Home Depot - Farmingdale, NY",,,0,135.19400000000002
+1280-MAKIT-6014,Makita Grinder,104.76,194,46,6,6,"Home Depot - Farmingdale, NY",,,0,155.848
+2201-HUSKY-6623,Husky Tool Set,47.6,140,66,5,25,"Home Depot - Commack, NY",,,0,178.48
+6170-RIGID-4022,Rigid Wet/Dry Vac,70.8,177,60,4,0,"Home Depot - Patchogue, NY",,,0,185.84
+6170-RIGID-4022,Rigid Wet/Dry Vac,10.0,125,92,8,7,"Home Depot - Patchogue, NY",,,0,277.6
+6170-MAKIT-6014,Makita Grinder,40.32,192,79,1,26,"Home Depot - Patchogue, NY",,,0,180.73600000000002
+1280-DEWAL-1804,DeWalt Impact Driver,61.48,212,71,6,10,"Home Depot - Farmingdale, NY",,,0,209.704
+6170-RYOBI-613,Ryobi Blower,44.22,134,67,10,0,"Home Depot - Patchogue, NY",,,0,241.156
+2201-DEWAL-1804,DeWalt Impact Driver,36.04,212,83,1,13,"Home Depot - Commack, NY",,,0,205.192
+1280-RYOBI-613,Ryobi Blower,85.5,114,25,9,6,"Home Depot - Farmingdale, NY",,,0,135.70000000000002
+6170-RYOBI-1163,Ryobi Chainsaw,121.52,196,38,4,0,"Home Depot - Patchogue, NY",,,0,131.696
+2201-RIGID-4022,Rigid Wet/Dry Vac,69.66,162,57,7,20,"Home Depot - Commack, NY",,,0,174.068
+6170-RIGID-4022,Rigid Wet/Dry Vac,40.8,120,66,10,3,"Home Depot - Patchogue, NY",,,0,236.24
+6170-MILWA-6459,Milwaukee Drill,33.6,160,79,5,16,"Home Depot - Patchogue, NY",,,0,218.08
+6170-MAKIT-6014,Makita Grinder,9.15,183,95,1,2,"Home Depot - Patchogue, NY",,,0,247.76999999999998
+6170-MILWA-6459,Milwaukee Drill,94.52,139,32,3,21,"Home Depot - Patchogue, NY",,,0,93.896
+2201-MILWA-6459,Milwaukee Drill,6.55,131,95,9,14,"Home Depot - Commack, NY",,,0,281.89
+6170-RYOBI-1163,Ryobi Chainsaw,124.56,173,28,6,13,"Home Depot - Patchogue, NY",,,0,107.488
+6170-MAKIT-6014,Makita Grinder,91.16,212,57,3,14,"Home Depot - Patchogue, NY",,,0,152.968
+1280-RYOBI-1163,Ryobi Chainsaw,70.98,182,61,8,15,"Home Depot - Farmingdale, NY",,,0,193.804
+6170-DEWAL-1804,DeWalt Impact Driver,103.39,211,51,4,2,"Home Depot - Patchogue, NY",,,0,158.922
+6170-RIGID-4022,Rigid Wet/Dry Vac,101.87,167,39,10,24,"Home Depot - Patchogue, NY",,,0,144.826
+6170-RYOBI-613,Ryobi Blower,24.31,143,83,3,17,"Home Depot - Patchogue, NY",,,0,214.738
+2201-HUSKY-6623,Husky Tool Set,86.4,120,28,3,0,"Home Depot - Commack, NY",,,0,112.72
+2201-RYOBI-1163,Ryobi Chainsaw,111.89,167,33,4,11,"Home Depot - Commack, NY",,,0,110.422
+6170-RYOBI-1163,Ryobi Chainsaw,72.64,227,68,4,26,"Home Depot - Patchogue, NY",,,0,170.27200000000002
+6170-MILWA-6459,Milwaukee Drill,103.68,162,36,10,4,"Home Depot - Patchogue, NY",,,0,162.464
+1280-RIGID-4022,Rigid Wet/Dry Vac,18.72,144,87,6,13,"Home Depot - Farmingdale, NY",,,0,246.656
+2201-RYOBI-613,Ryobi Blower,61.04,109,44,10,10,"Home Depot - Commack, NY",,,0,179.792
+1280-DEWAL-1804,DeWalt Impact Driver,6.66,222,97,3,12,"Home Depot - Farmingdale, NY",,,0,252.268
+1280-HUSKY-6623,Husky Tool Set,114.48,159,28,5,22,"Home Depot - Farmingdale, NY",,,0,92.704
+1280-MILWA-6459,Milwaukee Drill,106.5,142,25,4,0,"Home Depot - Farmingdale, NY",,,0,108.7
+1280-RYOBI-613,Ryobi Blower,97.98,142,31,4,17,"Home Depot - Farmingdale, NY",,,0,102.00399999999999
+6170-MILWA-6459,Milwaukee Drill,104.8,131,20,8,26,"Home Depot - Patchogue, NY",,,0,91.84
+6170-DEWAL-1804,DeWalt Impact Driver,75.66,194,61,9,3,"Home Depot - Patchogue, NY",,,0,213.268
+1280-DEWAL-1804,DeWalt Impact Driver,79.36,256,69,7,13,"Home Depot - Farmingdale, NY",,,0,204.52800000000002
+1280-DEWAL-1804,DeWalt Impact Driver,6.33,211,97,6,14,"Home Depot - Farmingdale, NY",,,0,267.93399999999997
+1280-RIGID-4022,Rigid Wet/Dry Vac,50.84,124,59,5,22,"Home Depot - Farmingdale, NY",,,0,167.432
+6170-RYOBI-1163,Ryobi Chainsaw,48.9,163,70,3,21,"Home Depot - Patchogue, NY",,,0,179.02
+6170-DEWAL-2532,DeWalt Saw,127.2,265,52,6,29,"Home Depot - Patchogue, NY",,,0,135.76
+6170-DEWAL-2532,DeWalt Saw,153.36,284,46,4,24,"Home Depot - Patchogue, NY",,,0,112.52799999999999
+1280-RYOBI-1163,Ryobi Chainsaw,13.44,224,94,5,8,"Home Depot - Farmingdale, NY",,,0,261.712
+1280-RYOBI-1163,Ryobi Chainsaw,122.83,173,29,7,5,"Home Depot - Farmingdale, NY",,,0,125.434
+1280-RIGID-4022,Rigid Wet/Dry Vac,101.08,133,24,9,30,"Home Depot - Farmingdale, NY",,,0,101.784
+1280-MILWA-6459,Milwaukee Drill,24.22,173,86,10,3,"Home Depot - Farmingdale, NY",,,0,279.556
+6170-MAKIT-6014,Makita Grinder,5.25,175,97,4,29,"Home Depot - Patchogue, NY",,,0,238.14999999999998
+1280-DEWAL-1804,DeWalt Impact Driver,110.16,204,46,10,23,"Home Depot - Farmingdale, NY",,,0,158.368
+1280-MILWA-6459,Milwaukee Drill,63.48,138,54,1,8,"Home Depot - Farmingdale, NY",,,0,147.704
