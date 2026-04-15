@@ -34,6 +34,9 @@ ITEMS = [
 ]
 
 
+# =========================
+# GENERATE DATA
+# =========================
 def generate_data():
 
     rows = []
@@ -44,7 +47,7 @@ def generate_data():
         store_id = random.choice(list(STORE_MAP.keys()))
 
         original_price = base_price + random.randint(10, 80)
-        drop_pct = random.randint(20, 100)  # enforce real deals only
+        drop_pct = random.randint(20, 100)
 
         price = round(original_price * (1 - drop_pct / 100), 2)
         price = max(price, 0)
@@ -82,13 +85,13 @@ print("DEBUG: rows =", len(df))
 
 
 # =========================
-# FILTER DEALS
+# FILTER DEALS (20%+ ONLY)
 # =========================
 deals = df[df["drop_pct"] >= 20].sort_values("drop_pct", ascending=False)
 
 
 # =========================
-# TELEGRAM CHUNK ENGINE
+# TELEGRAM SAFE CHUNKING
 # =========================
 def chunk(text, limit=3500):
     chunks = []
@@ -106,7 +109,10 @@ def chunk(text, limit=3500):
     return chunks
 
 
-message = "🚀 ENTERPRISE RETAIL INTELLIGENCE ENGINE (v1)\n\n"
+# =========================
+# BUILD MESSAGE
+# =========================
+message = "🚀 RETAIL INTELLIGENCE ENGINE (STABLE v1)\n\n"
 
 for _, row in deals.iterrows():
 
@@ -121,15 +127,25 @@ for _, row in deals.iterrows():
 
 🧠 ML Score: {row['ml_score']}
 
-🔎 HD MATCH: {row['hd_title']}
-🌐 {row['hd_url']}
+🔎 HD MATCH: {row['hd_title'] if row['hd_title'] else 'None'}
+🌐 {row['hd_url'] if row['hd_url'] else 'None'}
 🎯 Confidence: {row['hd_confidence']}
 
 ----------------------
 """
 
 
-for part in chunk(message):
-    send_alert(part)
+# =========================
+# SAFE SINGLE TELEGRAM SEND
+# =========================
+sent = False
 
-print("✅ Enterprise Retail Intelligence Engine Running")
+if not sent:
+
+    for part in chunk(message):
+        send_alert(part)
+
+    sent = True
+    print("✅ Telegram sent once per run")
+
+print("✅ Scheduler complete")
