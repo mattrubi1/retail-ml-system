@@ -1,11 +1,10 @@
 import os
 import pandas as pd
 import numpy as np
-import requests
 import random
 
 from engine import process
-from ml_engine import train_model, predict
+from ml_engine import predict
 from alerts import send_alert
 from utils import generate_sku, normalize_sku
 
@@ -22,77 +21,63 @@ STORE_MAP = {
     "1280": "Home Depot - Farmingdale, NY",
     "6170": "Home Depot - Patchogue, NY",
     "2201": "Home Depot - Commack, NY",
-    "4412": "Home Depot - Deer Park, NY"
+    "4412": "Home Depot - Deer Park, NY",
+    "3381": "Home Depot - Riverhead, NY",
+    "5520": "Home Depot - Islip, NY"
 }
 
 
 # =========================
-# FETCH REAL PRODUCT BASE
+# ITEM BASE
 # =========================
-def fetch_real_products():
-
-    base_items = [
-        ("Milwaukee M18 Drill", 129),
-        ("DeWalt Impact Driver", 149),
-        ("Ryobi Chainsaw", 199),
-        ("Husky Tool Set", 99),
-        ("Rigid Wet/Dry Vac", 79)
-    ]
-
-    products = []
-
-    for item in base_items:
-
-        original_price = item[1]
-        drop_pct = random.randint(10, 60)
-        price = round(original_price * (1 - drop_pct / 100), 2)
-
-        products.append({
-            "item_name": item[0],
-            "description": "Live product category",
-            "original_price": original_price,
-            "price": price,
-            "drop_pct": drop_pct
-        })
-
-    return products
+ITEMS = [
+    ("Milwaukee Drill", "M18 cordless drill kit"),
+    ("DeWalt Impact Driver", "20V MAX driver"),
+    ("Ryobi Chainsaw", "40V brushless chainsaw"),
+    ("Husky Tool Set", "270pc mechanics kit"),
+    ("Rigid Wet/Dry Vac", "6 gallon shop vac"),
+    ("Makita Grinder", "4.5 inch angle grinder"),
+    ("Craftsman Wrench Set", "20pc wrench set"),
+    ("Black+Decker Saw", "circular saw 7 1/4")
+]
 
 
 # =========================
-# REAL DATA GENERATOR
+# GENERATE 120 ITEMS
 # =========================
 def generate_real_data():
 
-    real_products = fetch_real_products()
-
     data = []
 
-    for item in real_products:
+    for _ in range(120):  # 🔥 OVER 100 ITEMS
 
-        store_id = np.random.choice(list(STORE_MAP.keys()))
+        store_id = random.choice(list(STORE_MAP.keys()))
+        item = random.choice(ITEMS)
+
+        original_price = random.randint(40, 400)
+        drop_pct = random.randint(5, 75)
+        price = round(original_price * (1 - drop_pct / 100), 2)
 
         data.append({
             "sku": generate_sku(),
-            "item_name": item["item_name"],
-            "description": item["description"],
-            "price": item["price"],
-            "original_price": item["original_price"],
-            "drop_pct": item["drop_pct"],
-            "velocity": np.random.randint(1, 5),
+            "item_name": item[0],
+            "description": item[1],
+            "price": price,
+            "original_price": original_price,
+            "drop_pct": drop_pct,
+            "velocity": random.randint(1, 10),
             "last_store_location": store_id,
             "store_name": STORE_MAP[store_id],
-            "ml_score": 0,
-            "status": "live"
+            "ml_score": 0
         })
 
     return data
 
 
 # =========================
-# FILE SAFETY
+# SETUP FILES
 # =========================
 def ensure_files():
-
     os.makedirs(DATA_DIR, exist_ok=True)
 
     for f in [CURRENT_FILE, HISTORY_FILE, ALERT_LOG]:
@@ -115,71 +100,47 @@ alerts = load(ALERT_LOG)
 
 
 # =========================
-# GENERATE DATA IF EMPTY
+# GENERATE IF EMPTY
 # =========================
-if current.empty or len(current) < 5:
+if current.empty or len(current) < 10:
     current = pd.DataFrame(generate_real_data())
 
 
 # =========================
-# FIX SKU FORMAT
-# =========================
-if "sku" in current.columns:
-    current["sku"] = current["sku"].apply(normalize_sku)
-
-
-# =========================
-# ML PIPELINE
+# PROCESS + ML
 # =========================
 current = process(current)
-train_model(current)
 current = predict(current)
 
 
 # =========================
-# ALERT SYSTEM
+# ALERT LOGIC (TOP 100)
 # =========================
-sent_skus = set(alerts["sku"]) if not alerts.empty else set()
-new_alerts = []
+TOP_ALERTS = 100
 
-for _, row in current.iterrows():
+top_items = current.sort_values("ml_score", ascending=False).head(TOP_ALERTS)
 
-    sku = normalize_sku(row["sku"])
-    score = row.get("ml_score", 0)
 
-    if score > 80 and sku not in sent_skus:
+message = "🚨 REAL INTELLIGENCE BULK REPORT\n\n"
 
-        send_alert(f"""🚨 REAL INTELLIGENCE ALERT
+for _, row in top_items.iterrows():
 
-📦 {row['item_name']}
-🏷 SKU: {sku}
+    message += f"""📦 {row['item_name']}
+🏷 SKU: {normalize_sku(row['sku'])}
+🏬 {row['store_name']}
+💰 ${row['price']} (Was ${row['original_price']})
+📉 {row['drop_pct']}% OFF
+🧠 Score: {round(row['ml_score'],2)}
 
-🏬 Store: {row['store_name']}
-📍 Store ID: {row['last_store_location']}
+----------------------
 
-💰 Current Price: ${row['price']}
-💵 Original Price: ${row.get('original_price', 'N/A')}
-📉 Discount: {row['drop_pct']}%
-
-🧠 Score: {round(score,2)}
-""")
-
-        new_alerts.append({
-            "sku": sku,
-            "ml_score": score
-        })
+"""
 
 
 # =========================
-# SAVE ALERT HISTORY
+# SEND SINGLE BULK MESSAGE
 # =========================
-if new_alerts:
-    pd.DataFrame(new_alerts).to_csv(
-        ALERT_LOG,
-        mode="a",
-        header=False,
-        index=False
-    )
+send_alert(message)
 
 
 # =========================
@@ -189,4 +150,4 @@ current.to_csv(CURRENT_FILE, index=False)
 history = pd.concat([history, current], ignore_index=True)
 history.to_csv(HISTORY_FILE, index=False)
 
-print("✅ SYSTEM RUN COMPLETE (REAL DATA MODE)")
+print("✅ 120 items generated + 100 alerts sent (bulk mode)")
