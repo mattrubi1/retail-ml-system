@@ -8,12 +8,13 @@ from alerts import send_alert
 
 
 # =========================
-# PATH (CRITICAL FIX)
+# ABSOLUTE PATH (CRITICAL FIX)
 # =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_PATH = os.path.join(BASE_DIR, "data", "current.csv")
+DATA_DIR = os.path.join(BASE_DIR, "data")
+DATA_PATH = os.path.join(DATA_DIR, "current.csv")
 
-os.makedirs(os.path.join(BASE_DIR, "data"), exist_ok=True)
+os.makedirs(DATA_DIR, exist_ok=True)
 
 
 # =========================
@@ -27,7 +28,7 @@ STORE_MAP = {
 
 
 # =========================
-# PRODUCT BASE
+# PRODUCTS
 # =========================
 ITEMS = [
     ("Milwaukee Drill", 120),
@@ -77,34 +78,30 @@ def generate_data():
 # RUN PIPELINE
 # =========================
 df = generate_data()
-
 print("DEBUG: Generated rows =", len(df))
 
 df = predict(df)
-
-print("DEBUG: After ML scoring complete")
-print(df[["item_name", "ml_score"]].head())
+print("DEBUG: ML scoring applied")
 
 
 # =========================
-# SAVE CSV (FIXED)
+# SAVE CSV (FORCE WRITE)
 # =========================
 df.to_csv(DATA_PATH, index=False, encoding="utf-8")
 
-print(f"✅ CSV WRITTEN: {DATA_PATH}")
+print("🔥 FILE EXISTS:", os.path.exists(DATA_PATH))
+print("🔥 FILE SIZE:", os.path.getsize(DATA_PATH))
 
 
 # =========================
-# TELEGRAM ALERTS (TOP 100)
+# TELEGRAM ALERTS
 # =========================
 try:
-
     top = df.sort_values("ml_score", ascending=False).head(100)
 
     message = "🚨 RETAIL INTELLIGENCE ALERT\n\n"
 
     for _, row in top.iterrows():
-
         message += f"""
 📦 {row['item_name']}
 🏷 SKU: {normalize_sku(row['sku'])}
@@ -118,15 +115,10 @@ try:
 """
 
     send_alert(message)
-
-    print("✅ Telegram sent successfully")
+    print("✅ Telegram sent")
 
 except Exception as e:
-    print("⚠️ Telegram failed:", str(e))
+    print("⚠️ Telegram failed:", e)
 
 
-# =========================
-# FINAL DEBUG
-# =========================
-print("DEBUG SAMPLE:")
-print(df.head(3))
+print("✅ Scheduler finished")
