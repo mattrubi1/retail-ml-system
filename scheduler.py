@@ -3,7 +3,7 @@ import pandas as pd
 import random
 
 from ml_engine import predict
-from utils import generate_sku, normalize_sku
+from utils import generate_store_sku, normalize_sku
 from alerts import send_alert
 
 
@@ -44,14 +44,14 @@ def generate_data():
 
         original_price = base_price + random.randint(10, 80)
 
-        # FULL RANGE DISCOUNTS (0–100%)
+        # FULL DISCOUNT RANGE (0–100%)
         drop_pct = random.randint(0, 100)
 
         price = round(original_price * (1 - drop_pct / 100), 2)
         price = max(price, 0)
 
         rows.append({
-            "sku": generate_sku(),
+            "sku": generate_store_sku(name, store_id),
             "item_name": name,
             "price": price,
             "original_price": original_price,
@@ -59,7 +59,7 @@ def generate_data():
             "velocity": random.randint(1, 10),
             "stock_qty": random.randint(0, 30),
             "store_name": STORE_MAP[store_id],
-            "last_store_location": store_id
+            "store_id": store_id
         })
 
     return pd.DataFrame(rows)
@@ -78,7 +78,7 @@ print("DEBUG: Generated rows =", len(df))
 
 
 # =========================
-# FILTER: 20%+ DISCOUNTS ONLY
+# FILTER (20%+ DEALS ONLY)
 # =========================
 deals = df[df["drop_pct"] >= 20].sort_values("drop_pct", ascending=False)
 
@@ -102,7 +102,7 @@ def chunk(text, limit=3500):
     return chunks
 
 
-message = "🚨 FULL RETAIL DEAL INTELLIGENCE (FREE MODE)\n\n"
+message = "🚨 FULL RETAIL DEAL INTELLIGENCE (STABLE SKU SYSTEM)\n\n"
 
 for _, row in deals.iterrows():
 
@@ -124,4 +124,4 @@ for _, row in deals.iterrows():
 for part in chunk(message):
     send_alert(part)
 
-print("✅ Free AI Deal Engine Running (No GPT)")
+print("✅ SKU System + Scheduler Updated Successfully")
