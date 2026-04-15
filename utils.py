@@ -1,7 +1,7 @@
 import numpy as np
 
 # =========================
-# SKU FORMAT: XXXX-XXX-XXX
+# GENERATE SKU (XXXX-XXX-XXX)
 # =========================
 def generate_sku():
 
@@ -11,9 +11,12 @@ def generate_sku():
 
 
 # =========================
-# NORMALIZE ANY EXISTING SKU
+# NORMALIZE ANY SKU INPUT
 # =========================
-def normalize_sku_value(value):
+def normalize_sku(value):
+
+    if value is None:
+        return generate_sku()
 
     value = str(value)
 
