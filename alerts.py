@@ -1,6 +1,8 @@
 import os
 import requests
 
+MAX_LENGTH = 4000  # Telegram limit safety
+
 
 def send_alert(message):
 
@@ -9,9 +11,6 @@ def send_alert(message):
 
     print("🔔 Attempting Telegram send...")
 
-    # =========================
-    # DEBUG CHECK
-    # =========================
     if not bot_token:
         print("❌ BOT_TOKEN missing")
         return
@@ -23,23 +22,39 @@ def send_alert(message):
     print("✅ BOT_TOKEN loaded")
     print("✅ CHAT_ID loaded")
 
-    # =========================
-    # SEND MESSAGE
-    # =========================
     url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
 
-    payload = {
-        "chat_id": chat_id,
-        "text": message
-    }
+    # =========================
+    # SPLIT MESSAGE INTO CHUNKS
+    # =========================
+    chunks = []
 
-    try:
-        response = requests.post(url, data=payload)
+    while len(message) > MAX_LENGTH:
+        split_index = message[:MAX_LENGTH].rfind("\n")
+        if split_index == -1:
+            split_index = MAX_LENGTH
 
-        if response.status_code == 200:
-            print("✅ Telegram sent successfully")
-        else:
-            print("❌ Telegram failed:", response.text)
+        chunks.append(message[:split_index])
+        message = message[split_index:]
 
-    except Exception as e:
-        print("❌ Telegram error:", str(e))
+    chunks.append(message)
+
+    # =========================
+    # SEND CHUNKS
+    # =========================
+    for i, chunk in enumerate(chunks):
+        payload = {
+            "chat_id": chat_id,
+            "text": chunk
+        }
+
+        try:
+            response = requests.post(url, data=payload)
+
+            if response.status_code == 200:
+                print(f"✅ Telegram chunk {i+1}/{len(chunks)} sent")
+            else:
+                print("❌ Telegram failed:", response.text)
+
+        except Exception as e:
+            print("❌ Telegram error:", str(e))
