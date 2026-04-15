@@ -1,49 +1,43 @@
 import pandas as pd
-from engine import process
 from ml_engine import predict
 from alerts import send_alert
-from hd_api import get_product_data
 
-def format_sku(sku):
-    sku = str(sku)
-    return f"{sku[:4]}-{sku[4:7]}-{sku[7:]}" if len(sku) >= 10 else sku
+# load datasets
+current = pd.read_csv("data/current.csv")
+history = pd.read_csv("data/history.csv")
 
+# store snapshot history
+current.to_csv("data/history.csv", mode="a", header=False, index=False)
 
-df = pd.read_csv("data.csv")
+# ML scoring
+current = predict(current)
 
-# 🔥 FETCH REAL DATA
-for i, row in df.iterrows():
+# detect removed items
+removed = set(history["sku"]) - set(current["sku"])
 
-    product = get_product_data(row["sku"])
+# detect new items
+new = set(current["sku"]) - set(history["sku"])
 
-    df.at[i, "item_name"] = product["item_name"]
-    df.at[i, "price"] = product["price"]
+# update history tracking flags
+current["status"] = "existing"
+current.loc[current["sku"].isin(new), "status"] = "NEW"
+current.loc[current["sku"].isin(removed), "status"] = "REMOVED"
 
-    # Simulate discount logic
-    df.at[i, "drop_pct"] = round((100 - product["price"]), 2)
+# save
+current.to_csv("data/current.csv", index=False)
 
-# Process + ML
-df = process(df)
-df = predict(df)
-
-df.to_csv("data.csv", index=False)
-
-# ALERTS
-for _, row in df.iterrows():
+# alerts
+for _, row in current.iterrows():
 
     if row["ml_score"] > 80:
 
-        message = f"""🚨 HOME DEPOT LIVE ALERT
+        send_alert(f"""🚨 STORE INTELLIGENCE ALERT
 
 📦 {row['item_name']}
-🏬 {row['last_store_location']}
-🏷 SKU: {format_sku(row['sku'])}
-💰 Price: ${row['price']}
-📊 Score: {round(row['ml_score'], 2)}
+🏬 Store: {row['last_store_location']}
+🏷 SKU: {row['sku']}
+📊 Score: {round(row['ml_score'],2)}
+📌 Status: {row['status']}
+""")
 
-🔗 https://www.homedepot.com/p/{row['sku']}
-"""
-
-        send_alert(message)
-
-print("Live Home Depot data running")
+print("Store intelligence system running")
