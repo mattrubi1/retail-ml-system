@@ -5,6 +5,7 @@ import random
 from ml_engine import predict
 from utils import generate_store_sku, normalize_sku
 from alerts import send_alert
+from homedepot_matcher import match_product
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -44,11 +45,12 @@ def generate_data():
 
         original_price = base_price + random.randint(10, 80)
 
-        # FULL DISCOUNT RANGE (0–100%)
         drop_pct = random.randint(0, 100)
 
         price = round(original_price * (1 - drop_pct / 100), 2)
         price = max(price, 0)
+
+        match = match_product(name)
 
         rows.append({
             "sku": generate_store_sku(name, store_id),
@@ -59,7 +61,11 @@ def generate_data():
             "velocity": random.randint(1, 10),
             "stock_qty": random.randint(0, 30),
             "store_name": STORE_MAP[store_id],
-            "store_id": store_id
+
+            # REAL HOME DEPOT MATCH
+            "hd_title": match["title"],
+            "hd_url": match["url"],
+            "hd_confidence": match["confidence"]
         })
 
     return pd.DataFrame(rows)
@@ -74,11 +80,11 @@ df = predict(df)
 
 df.to_csv(DATA_PATH, index=False, encoding="utf-8")
 
-print("DEBUG: Generated rows =", len(df))
+print("DEBUG: rows =", len(df))
 
 
 # =========================
-# FILTER (20%+ DEALS ONLY)
+# FILTER (20%+ DEALS)
 # =========================
 deals = df[df["drop_pct"] >= 20].sort_values("drop_pct", ascending=False)
 
@@ -102,7 +108,7 @@ def chunk(text, limit=3500):
     return chunks
 
 
-message = "🚨 FULL RETAIL DEAL INTELLIGENCE (STABLE SKU SYSTEM)\n\n"
+message = "🚨 REAL HOME DEPOT DEAL INTELLIGENCE ENGINE\n\n"
 
 for _, row in deals.iterrows():
 
@@ -117,6 +123,10 @@ for _, row in deals.iterrows():
 
 🧠 ML Score: {row['ml_score']}
 
+🔎 HD MATCH: {row['hd_title']}
+🌐 {row['hd_url']}
+🎯 Confidence: {row['hd_confidence']}
+
 ----------------------
 """
 
@@ -124,4 +134,4 @@ for _, row in deals.iterrows():
 for part in chunk(message):
     send_alert(part)
 
-print("✅ SKU System + Scheduler Updated Successfully")
+print("✅ Real Home Depot Matching Engine Running")
