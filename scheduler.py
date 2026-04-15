@@ -8,7 +8,6 @@ from utils import generate_sku, normalize_sku
 
 
 DATA_PATH = "data/current.csv"
-
 os.makedirs("data", exist_ok=True)
 
 
@@ -17,6 +16,7 @@ STORE_MAP = {
     "6170": "Home Depot - Patchogue, NY",
     "2201": "Home Depot - Commack, NY"
 }
+
 
 ITEMS = [
     ("Milwaukee Drill", 120),
@@ -28,7 +28,7 @@ ITEMS = [
 ]
 
 
-def generate():
+def generate_data():
 
     data = []
 
@@ -37,17 +37,21 @@ def generate():
         name, base_price = random.choice(ITEMS)
         store_id = random.choice(list(STORE_MAP.keys()))
 
-        original = base_price + random.randint(10, 80)
-        drop = random.randint(5, 60)
-        price = round(original * (1 - drop / 100), 2)
+        original_price = base_price + random.randint(10, 80)
+        drop_pct = random.randint(5, 60)
+        price = round(original_price * (1 - drop_pct / 100), 2)
 
         data.append({
             "sku": generate_sku(),
             "item_name": name,
             "price": price,
-            "original_price": original,
-            "drop_pct": drop,
+            "original_price": original_price,
+            "drop_pct": drop_pct,
             "velocity": random.randint(1, 10),
+
+            # ✅ NEW FIELD
+            "stock_qty": random.randint(0, 25),
+
             "store_name": STORE_MAP[store_id],
             "last_store_location": store_id
         })
@@ -56,21 +60,18 @@ def generate():
 
 
 # =========================
-# GENERATE + SCORE
+# RUN PIPELINE
 # =========================
-df = generate()
+df = generate_data()
 df = predict(df)
 
-# =========================
-# SAVE
-# =========================
 df.to_csv(DATA_PATH, index=False)
 
-print("✅ current.csv updated")
+print("✅ current.csv updated with stock intelligence")
 
 
 # =========================
-# TELEGRAM (TOP 100)
+# TELEGRAM ALERTS (TOP 100)
 # =========================
 top = df.sort_values("ml_score", ascending=False).head(100)
 
@@ -84,6 +85,7 @@ for _, row in top.iterrows():
 🏬 {row['store_name']}
 💰 ${row['price']} (Was ${row['original_price']})
 📉 {row['drop_pct']}%
+📦 Stock: {row['stock_qty']}
 🧠 Score: {row['ml_score']}
 
 ----------------------
