@@ -2,31 +2,53 @@ import streamlit as st
 import pandas as pd
 import os
 
-st.set_page_config(page_title="GPT Deal Engine", layout="wide")
+st.set_page_config(page_title="Retail Full Inventory View", layout="wide")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(BASE_DIR, "data", "current.csv")
 
 df = pd.read_csv(DATA_PATH)
 
-st.title("🤖 GPT-Level Retail Intelligence System")
+# numeric safety
+df["ml_score"] = pd.to_numeric(df.get("ml_score", 0), errors="coerce").fillna(0)
 
-if "gpt_score" not in df.columns:
-    st.warning("Run scheduler first")
-    st.stop()
+st.title("🟢 Full Retail Intelligence System (20%+ All Items)")
 
-df = df[df["gpt_score"] >= 80]
+# =========================
+# FILTERS
+# =========================
+st.sidebar.header("Filters")
 
-st.subheader("🔥 Elite GPT Deals")
+min_discount = st.sidebar.slider("Minimum Discount %", 20, 80, 20)
 
-st.dataframe(df, width="stretch")
+df = df[df["drop_pct"] >= min_discount]
 
-st.subheader("🧠 Score Comparison")
+# =========================
+# FULL TABLE VIEW
+# =========================
+st.subheader("📦 All Discounted Items")
 
-st.bar_chart(df[["ml_score", "ai_score", "gpt_score"]])
+st.dataframe(df.sort_values("drop_pct", ascending=False), width="stretch")
 
-st.subheader("🚀 Verdict Breakdown")
+# =========================
+# DISCOUNT ANALYTICS
+# =========================
+st.subheader("📉 Discount Distribution")
 
-st.bar_chart(df["gpt_verdict"].value_counts())
+st.bar_chart(df["drop_pct"])
 
-st.success("GPT Intelligence Active 🤖")
+# =========================
+# STORE VIEW
+# =========================
+st.subheader("🏬 Store Breakdown")
+
+st.bar_chart(df["store_name"].value_counts())
+
+# =========================
+# SCORE VIEW (optional but useful)
+# =========================
+if "gpt_score" in df.columns:
+    st.subheader("🧠 GPT Score Distribution")
+    st.bar_chart(df["gpt_score"])
+
+st.success("Full Inventory Mode Active ✅")
