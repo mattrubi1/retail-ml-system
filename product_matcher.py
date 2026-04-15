@@ -3,61 +3,47 @@ from bs4 import BeautifulSoup
 import urllib.parse
 import re
 
-
 HEADERS = {
     "User-Agent": "Mozilla/5.0"
 }
 
 
-def search_duckduckgo(query):
+def _extract_homedepot_urls(html):
+    soup = BeautifulSoup(html, "html.parser")
 
+    results = []
+
+    for a in soup.select("a.result__a"):
+        href = a.get("href")
+        title = a.get_text(strip=True)
+
+        if not href:
+            continue
+
+        # Keep only real product/browse pages
+        if "homedepot.com" in href and ("/p/" in href or "/b/" in href):
+            results.append({
+                "title": title,
+                "url": href.split("?")[0]
+            })
+
+    return results
+
+
+def search_homedepot(query):
     url = "https://duckduckgo.com/html/"
-
-    params = {
-        "q": f"site:homedepot.com {query}"
-    }
+    params = {"q": f"site:homedepot.com {query}"}
 
     try:
         r = requests.get(url, params=params, headers=HEADERS, timeout=10)
-        soup = BeautifulSoup(r.text, "html.parser")
-
-        results = []
-
-        for a in soup.select("a.result__a"):
-
-            href = a.get("href")
-            title = a.get_text()
-
-            if not href:
-                continue
-
-            # STRICT FILTER: only real product pages
-            if "homedepot.com" in href and re.search(r"/p/|/b/", href):
-
-                results.append({
-                    "title": title,
-                    "url": href
-                })
-
-        return results
-
-    except Exception as e:
+        return _extract_homedepot_urls(r.text)
+    except Exception:
         return []
-
-
-def clean_url(url):
-
-    # Remove tracking junk
-    if not url:
-        return None
-
-    url = url.split("?")[0]
-    return url
 
 
 def match_product(item_name: str):
 
-    results = search_duckduckgo(item_name)
+    results = search_homedepot(item_name)
 
     if not results:
         return {
@@ -68,8 +54,10 @@ def match_product(item_name: str):
 
     best = results[0]
 
+    confidence = 0.8 if "/p/" in best["url"] else 0.5
+
     return {
         "title": best["title"],
-        "url": clean_url(best["url"]),
-        "confidence": 0.75 if best["url"] else 0
+        "url": best["url"],
+        "confidence": confidence
     }
