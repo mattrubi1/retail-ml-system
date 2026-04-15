@@ -9,10 +9,7 @@ from product_matcher import match_product
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")
-DATA_PATH = os.path.join(DATA_DIR, "current.csv")
-
-os.makedirs(DATA_DIR, exist_ok=True)
+DATA_PATH = os.path.join(BASE_DIR, "current.csv")
 
 
 STORE_MAP = {
@@ -74,14 +71,15 @@ df = predict(df)
 
 df.to_csv(DATA_PATH, index=False)
 
-print("DEBUG: rows =", len(df))
+print("DEBUG rows:", len(df))
 
 
 deals = df[df["drop_pct"] >= 20].sort_values("drop_pct", ascending=False)
 
 
 def chunk(text, limit=3500):
-    chunks, current = [], ""
+    chunks = []
+    current = ""
 
     for line in text.split("\n"):
         if len(current) + len(line) > limit:
@@ -110,8 +108,8 @@ for _, row in deals.iterrows():
 
 🧠 ML Score: {row['ml_score']}
 
-🔎 HD MATCH: {row['hd_title'] if row['hd_title'] else 'None'}
-🌐 {row['hd_url'] if row['hd_url'] else 'None'}
+🔎 HD MATCH: {row['hd_title'] or 'None'}
+🌐 {row['hd_url'] or 'None'}
 🎯 Confidence: {row['hd_confidence']}
 
 ----------------------
@@ -126,4 +124,4 @@ if not sent:
 
     sent = True
 
-print("✅ Done")
+print("DONE")
