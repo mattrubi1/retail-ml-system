@@ -1,63 +1,43 @@
 import requests
-from bs4 import BeautifulSoup
 import urllib.parse
 import re
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0"
-}
-
-
-def _extract_homedepot_urls(html):
-    soup = BeautifulSoup(html, "html.parser")
-
-    results = []
-
-    for a in soup.select("a.result__a"):
-        href = a.get("href")
-        title = a.get_text(strip=True)
-
-        if not href:
-            continue
-
-        # Keep only real product/browse pages
-        if "homedepot.com" in href and ("/p/" in href or "/b/" in href):
-            results.append({
-                "title": title,
-                "url": href.split("?")[0]
-            })
-
-    return results
-
-
-def search_homedepot(query):
-    url = "https://duckduckgo.com/html/"
-    params = {"q": f"site:homedepot.com {query}"}
-
-    try:
-        r = requests.get(url, params=params, headers=HEADERS, timeout=10)
-        return _extract_homedepot_urls(r.text)
-    except Exception:
-        return []
+HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 
 def match_product(item_name: str):
 
-    results = search_homedepot(item_name)
+    try:
+        query = urllib.parse.quote(f"site:homedepot.com {item_name}")
 
-    if not results:
+        url = f"https://duckduckgo.com/html/?q={query}"
+
+        r = requests.get(url, headers=HEADERS, timeout=10)
+        html = r.text
+
+        # Extract any Home Depot product link
+        matches = re.findall(r"https://www\.homedepot\.com/[^\s\"']+", html)
+
+        if not matches:
+            return {
+                "title": None,
+                "url": None,
+                "confidence": 0
+            }
+
+        clean_url = matches[0].split("?")[0]
+
+        confidence = 0.7 if "/p/" in clean_url else 0.4
+
+        return {
+            "title": item_name,
+            "url": clean_url,
+            "confidence": confidence
+        }
+
+    except Exception:
         return {
             "title": None,
             "url": None,
             "confidence": 0
         }
-
-    best = results[0]
-
-    confidence = 0.8 if "/p/" in best["url"] else 0.5
-
-    return {
-        "title": best["title"],
-        "url": best["url"],
-        "confidence": confidence
-    }
