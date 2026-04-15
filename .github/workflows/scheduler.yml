@@ -1,36 +1,36 @@
-import pandas as pd
-from engine import process
-from ml_engine import predict
-from alerts import send_alert
+name: Run ML
 
-# Load data
-df = pd.read_csv("data.csv")
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/15 * * * *"
 
-# Run processing + ML
-df = process(df)
-df = predict(df)
+jobs:
+  run:
+    runs-on: ubuntu-latest
 
-# Save updated data
-df.to_csv("data.csv", index=False)
+    permissions:
+      contents: write
 
-# SEND ALERTS
-for _, row in df.iterrows():
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-    if row["ml_score"] > 80:
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
 
-        message = f"""🚨 HOME DEPOT CLEARANCE ALERT
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-📦 Item: {row['item_name']}
-📝 Description: {row['description']}
-🏬 Store: {row['last_store_location']}
-🏷 SKU: {row['sku']}
-💰 Price: ${row['price']}
-📉 Discount: {row['drop_pct']}%
-📊 Score: {round(row['ml_score'], 2)}
+      - name: Run pipeline
+        run: python scheduler.py
 
-⚡ HIGH VALUE OPPORTUNITY
-"""
-
-        send_alert(message)
-
-print("System updated with full alerts")
+      - name: Commit updated data
+        run: |
+          git config --global user.name "bot"
+          git config --global user.email "bot@users.noreply.github.com"
+          git add data.csv
+          git commit -m "update data" || echo "no changes"
+          git push
