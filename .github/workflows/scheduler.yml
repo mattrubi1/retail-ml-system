@@ -1,23 +1,36 @@
-import pandas as pd
-from engine import process
-from ml_engine import predict
-from alerts import send_alert
+name: Run ML
 
-df = pd.read_csv("data.csv")
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/15 * * * *"
 
-df = process(df)
-df = predict(df)
+jobs:
+  run:
+    runs-on: ubuntu-latest
 
-df.to_csv("data.csv", index=False)
+    permissions:
+      contents: write
 
-for _, row in df.iterrows():
-    if row["ml_score"] > 80:
-        send_alert(f"""🚨 HIGH VALUE ALERT
-Item: {row['item_name']}
-Desc: {row['description']}
-SKU: {row['sku']}
-Store: {row['last_store_location']}
-Score: {row['ml_score']}
-Price: {row['price']}""")
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-print("Updated with store location")
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run pipeline
+        run: python scheduler.py
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "bot"
+          git config --global user.email "bot@users.noreply.github.com"
+          git add data.csv
+          git commit -m "update data" || echo "no changes"
+          git push
