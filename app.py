@@ -1,15 +1,18 @@
 import streamlit as st
 import pandas as pd
 
-st.title("Retail ML System")
+st.title("🧠 Retail ML System")
 
-# LOAD DATA FROM GITHUB RAW FILE
-url = "https://raw.githubusercontent.com/mattrubi1/retail-ml-system/main/data.csv"
-
+url = "https://raw.githubusercontent.com/YOUR_USERNAME/retail-ml-system/main/data.csv"
 df = pd.read_csv(url)
 
+st.subheader("All Items")
 st.dataframe(df)
 
-st.subheader("Top Items")
-st.dataframe(df.sort_values("ml_score", ascending=False))
+st.subheader("Top Opportunities")
 
+st.dataframe(
+    df.sort_values("ml_score", ascending=False)[
+        ["item_name", "description", "last_store_location", "price", "ml_score"]
+    ]
+)
