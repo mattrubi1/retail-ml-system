@@ -1,10 +1,10 @@
 import os
 import pandas as pd
-import numpy as np
 
 from engine import process
 from ml_engine import train_model, predict
 from alerts import send_alert
+from utils import generate_sku, normalize_sku
 
 DATA_DIR = "data"
 CURRENT_FILE = f"{DATA_DIR}/current.csv"
@@ -13,7 +13,7 @@ ALERT_LOG = f"{DATA_DIR}/alerts_sent.csv"
 
 
 # =========================
-# FILE INIT
+# FILE SAFETY
 # =========================
 def ensure_files():
 
@@ -39,39 +39,27 @@ alerts = load(ALERT_LOG)
 
 
 # =========================
-# 🚨 AUTO-GENERATE REALISTIC DATA IF FAKE
+# FIX SKU FORMAT SYSTEM-WIDE
 # =========================
-def generate_live_data():
-
-    stores = [6151,6170,8466,1213,1265,6167,1285,6955,1280,1264]
-
-    data = []
-
-    for i in range(25):
-
-        sku = f"{np.random.randint(1000,9999)}-{np.random.randint(100,999)}-{np.random.randint(100,999)}"
-
-        data.append({
-            "sku": sku,
-            "item_name": f"Item {i}",
-            "description": "Auto generated live feed",
-            "price": np.random.randint(5, 120),
-            "drop_pct": np.random.randint(10, 80),
-            "velocity": np.random.randint(1, 5),
-            "last_store_location": str(np.random.choice(stores)),
-            "ml_score": 0,
-            "status": "live"
-        })
-
-    return pd.DataFrame(data)
+if not current.empty and "sku" in current.columns:
+    current["sku"] = current["sku"].apply(normalize_sku)
 
 
 # =========================
-# FORCE REAL DATA IF EMPTY OR TEST DATA
+# BOOTSTRAP DATA IF EMPTY
 # =========================
-if current.empty or len(current) <= 2:
-    print("⚠️ Generating live dataset (replacing test data)")
-    current = generate_live_data()
+if current.empty:
+    current = pd.DataFrame([{
+        "sku": generate_sku(),
+        "item_name": "Bootstrap Item",
+        "description": "System initialized",
+        "price": 10,
+        "drop_pct": 20,
+        "velocity": 1,
+        "last_store_location": "1280",
+        "ml_score": 50,
+        "status": "live"
+    }])
 
 
 # =========================
@@ -84,39 +72,45 @@ current = predict(current)
 
 
 # =========================
-# ALERT DEDUP
+# ALERT SYSTEM (DEDUPED)
 # =========================
-sent = set(alerts["sku"]) if not alerts.empty else set()
+sent_skus = set(alerts["sku"]) if not alerts.empty else set()
 
 new_alerts = []
 
 for _, row in current.iterrows():
 
-    sku = str(row["sku"])
+    sku = normalize_sku(row["sku"])
+    score = row.get("ml_score", 0)
 
-    if row["ml_score"] > 80 and sku not in sent:
+    if score > 80 and sku not in sent_skus:
 
-        send_alert(f"""🚨 REAL INTELLIGENCE ALERT
+        send_alert(f"""🚨 HOME DEPOT INTELLIGENCE ALERT
 
 📦 {row['item_name']}
-🏷 SKU: {row['sku']}
+🏷 SKU: {sku}
 🏬 Store: {row['last_store_location']}
 💰 Price: ${row['price']}
 📉 Drop: {row['drop_pct']}%
-🧠 Score: {round(row['ml_score'],2)}
+🧠 Score: {round(score,2)}
 """)
 
         new_alerts.append({
             "sku": sku,
-            "ml_score": row["ml_score"]
+            "ml_score": score
         })
 
 
 # =========================
-# SAVE ALERT MEMORY
+# SAVE ALERT HISTORY
 # =========================
 if new_alerts:
-    pd.DataFrame(new_alerts).to_csv(ALERT_LOG, mode="a", header=False, index=False)
+    pd.DataFrame(new_alerts).to_csv(
+        ALERT_LOG,
+        mode="a",
+        header=False,
+        index=False
+    )
 
 
 # =========================
@@ -126,4 +120,4 @@ current.to_csv(CURRENT_FILE, index=False)
 history = pd.concat([history, current], ignore_index=True)
 history.to_csv(HISTORY_FILE, index=False)
 
-print("✅ REAL DATA PIPELINE ACTIVE")
+print("✅ SYSTEM RUN COMPLETE (SKU FIXED)")
