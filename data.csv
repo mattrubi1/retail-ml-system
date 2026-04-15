@@ -1,5 +1,5 @@
-sku,price,drop_pct,velocity,timestamp,target,ml_score
-1001,9.99,75,2.3,2026-04-15T00:52:23.564538,91.0,87.45199999999998
-1002,19.99,40,1.2,2026-04-15T00:52:23.564538,48.0,46.373999999999995
-1003,49.99,10,0.5,2026-04-15T00:52:23.564538,16.0,32.614000000000004
-1004,0.01,99,5.0,2026-04-15T00:52:23.564538,159.4,135.54999999999984
+sku,item_name,description,price,drop_pct,velocity,last_store_location
+1001,Shop Vac 12 Gal,Heavy duty wet dry vacuum,9.99,75,2.3,Home Depot #1280 Bay Shore
+1002,LED Work Light 5000LM,Bright rechargeable jobsite light,19.99,40,1.2,Home Depot #1278 Ronkonkoma
+1003,Cordless Drill Kit 20V,Brushless drill with battery,49.99,10,0.5,Home Depot #6167 Commack
+1004,Smart Thermostat WiFi,Energy saving home thermostat,0.01,99,5.0,Home Depot #6151 Levittown
