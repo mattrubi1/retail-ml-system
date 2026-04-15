@@ -1,4 +1,0 @@
-sku,item_name,description,price,drop_pct,velocity,last_store_location,ml_score,status
-1004,Test Item 1,Starter item,10,20,1,1280,50,existing
-1005,Test Item 2,Starter item,15,30,1,6151,60,existing
-1006,Test Item 3,Starter item,8,40,1,6170,70,NEW
