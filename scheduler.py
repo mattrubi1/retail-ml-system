@@ -8,6 +8,10 @@ from alerts import send_alert
 from product_matcher import match_product
 
 
+# 🔥 TEST MESSAGE (IMPORTANT)
+send_alert("🚀 TEST MESSAGE - BOT IS WORKING")
+
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(BASE_DIR, "current.csv")
 
@@ -47,6 +51,8 @@ def generate_data():
 
         match = match_product(name)
 
+        print("MATCH DEBUG:", name, match)
+
         rows.append({
             "sku": generate_store_sku(name, store_id),
 
@@ -71,7 +77,7 @@ df = predict(df)
 
 df.to_csv(DATA_PATH, index=False)
 
-print("Rows:", len(df))
+print("DEBUG rows:", len(df))
 
 
 deals = df[df["drop_pct"] >= 20].sort_values("drop_pct", ascending=False)
@@ -116,13 +122,8 @@ for _, row in deals.iterrows():
 """
 
 
-sent_once = False
+for part in chunk(message):
+    send_alert(part)
 
-if not sent_once:
 
-    for part in chunk(message):
-        send_alert(part)
-
-    sent_once = True
-
-print("DONE")
+print("✅ DONE")
