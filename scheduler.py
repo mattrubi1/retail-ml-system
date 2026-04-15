@@ -3,8 +3,7 @@ import pandas as pd
 import random
 
 from ml_engine import predict
-from ai_engine import enrich_dataframe
-from gpt_engine import enrich_with_gpt
+from openai_engine import enrich_with_gpt  # keep if you still use GPT layer
 from utils import generate_sku, normalize_sku
 from alerts import send_alert
 
@@ -45,7 +44,8 @@ def generate_data():
         store_id = random.choice(list(STORE_MAP.keys()))
 
         original_price = base_price + random.randint(10, 80)
-        drop_pct = random.randint(5, 60)
+        drop_pct = random.randint(5, 80)  # expanded range for visibility
+
         price = round(original_price * (1 - drop_pct / 100), 2)
 
         rows.append({
@@ -69,50 +69,50 @@ def generate_data():
 df = generate_data()
 
 df = predict(df)
-df = enrich_dataframe(df)        # AI layer
-df = enrich_with_gpt(df)        # GPT layer
+
+# OPTIONAL GPT LAYER (safe if enabled)
+try:
+    df = enrich_with_gpt(df)
+except:
+    pass
+
 
 df.to_csv(DATA_PATH, index=False, encoding="utf-8")
 
-print("DEBUG: rows =", len(df))
+print("DEBUG: Generated rows =", len(df))
 
 
 # =========================
-# FINAL DEAL FILTER
+# FULL INVENTORY FILTER (20%+)
 # =========================
-deals = df[df["gpt_score"] >= 80].sort_values("gpt_score", ascending=False).head(10)
+deals = df[df["drop_pct"] >= 20].sort_values("drop_pct", ascending=False)
 
 
 # =========================
-# GPT ALERT MESSAGE
+# TELEGRAM MESSAGE BUILD
 # =========================
-if deals.empty:
-    message = "🚨 NO ELITE DEALS FOUND"
-else:
-    message = "🤖 GPT-LEVEL DEAL INTELLIGENCE ALERT\n\n"
+message = "🚨 FULL STORE DISCOUNT INTELLIGENCE (20%+ ALL ITEMS)\n\n"
 
-    for _, row in deals.iterrows():
+for _, row in deals.iterrows():
 
-        message += f"""
-🔥 {row['item_name']}
+    message += f"""
+📦 {row['item_name']}
 🏷 SKU: {normalize_sku(row['sku'])}
 🏬 {row['store_name']}
+
 💰 ${row['price']} (Was ${row['original_price']})
 📉 {row['drop_pct']}% OFF
 📦 Stock: {row['stock_qty']}
 
 🧠 ML Score: {row['ml_score']}
-🤖 AI Score: {row['ai_score']}
-🧬 GPT Score: {row['gpt_score']}
+🤖 GPT Score: {row.get('gpt_score', 'N/A')}
 
-🚀 Verdict: {row['gpt_verdict']}
-
-💡 Reasoning:
-{row['gpt_reasoning']}
+💡 Insight: {row.get('gpt_reasoning', 'No AI analysis')}
 
 ----------------------
 """
 
+
 send_alert(message)
 
-print("✅ GPT Deal Engine finished")
+print("✅ Full Inventory Mode Finished")
