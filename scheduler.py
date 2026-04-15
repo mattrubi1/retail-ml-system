@@ -7,6 +7,9 @@ from utils import generate_sku, normalize_sku
 from alerts import send_alert
 
 
+# =========================
+# PATH SETUP (CRITICAL FIX)
+# =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 DATA_PATH = os.path.join(DATA_DIR, "current.csv")
@@ -14,6 +17,9 @@ DATA_PATH = os.path.join(DATA_DIR, "current.csv")
 os.makedirs(DATA_DIR, exist_ok=True)
 
 
+# =========================
+# STORE MAP
+# =========================
 STORE_MAP = {
     "1280": "Home Depot - Farmingdale, NY",
     "6170": "Home Depot - Patchogue, NY",
@@ -21,6 +27,9 @@ STORE_MAP = {
 }
 
 
+# =========================
+# PRODUCT BASE LIST
+# =========================
 ITEMS = [
     ("Milwaukee Drill", 120),
     ("DeWalt Impact Driver", 180),
@@ -33,6 +42,9 @@ ITEMS = [
 ]
 
 
+# =========================
+# GENERATE DATA
+# =========================
 def generate_data():
 
     rows = []
@@ -61,15 +73,28 @@ def generate_data():
     return pd.DataFrame(rows)
 
 
+# =========================
+# RUN PIPELINE
+# =========================
 df = generate_data()
-df = predict(df)
+print("DEBUG: Generated rows =", len(df))
 
+df = predict(df)
+print("DEBUG: ML scoring applied")
+
+
+# =========================
+# SAVE CSV
+# =========================
 df.to_csv(DATA_PATH, index=False, encoding="utf-8")
 
 print("🔥 FILE EXISTS:", os.path.exists(DATA_PATH))
 print("🔥 FILE SIZE:", os.path.getsize(DATA_PATH))
 
 
+# =========================
+# BUILD TELEGRAM ALERT
+# =========================
 top = df.sort_values("ml_score", ascending=False).head(20)
 
 message = "🚨 RETAIL INTELLIGENCE ALERT\n\n"
@@ -87,6 +112,13 @@ for _, row in top.iterrows():
 ----------------------
 """
 
+print("DEBUG: Message length =", len(message))
+
+
+# =========================
+# SEND ALERT
+# =========================
 send_alert(message)
+
 
 print("✅ Scheduler finished")
