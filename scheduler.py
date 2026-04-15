@@ -5,11 +5,10 @@ import random
 from ml_engine import predict
 from utils import generate_store_sku, normalize_sku
 from alerts import send_alert
-from product_matcher import match_product
+from data_source import fetch_products
 
 
-# 🔥 TEST MESSAGE (IMPORTANT)
-send_alert("🚀 TEST MESSAGE - BOT IS WORKING")
+send_alert("🚀 LIVE DATA PIPELINE STARTED")
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -23,40 +22,31 @@ STORE_MAP = {
 }
 
 
-ITEMS = [
-    ("Milwaukee Drill", 120),
-    ("DeWalt Impact Driver", 180),
-    ("Ryobi Chainsaw", 150),
-    ("Husky Tool Set", 90),
-    ("Rigid Wet/Dry Vac", 110),
-    ("Makita Grinder", 160),
-    ("Ryobi Blower", 85),
-    ("DeWalt Saw", 210)
-]
-
-
 def generate_data():
 
     rows = []
 
-    for _ in range(120):
+    products = fetch_products()
 
-        name, base_price = random.choice(ITEMS)
+    print("REAL PRODUCTS FOUND:", len(products))
+
+    if not products:
+        print("❌ No products found")
+        return pd.DataFrame()
+
+    for p in products:
+
         store_id = random.choice(list(STORE_MAP.keys()))
 
-        original_price = base_price + random.randint(10, 60)
-        drop_pct = random.randint(20, 100)
+        original_price = random.randint(80, 300)
+        drop_pct = random.randint(20, 80)
 
         price = round(original_price * (1 - drop_pct / 100), 2)
 
-        match = match_product(name)
-
-        print("MATCH DEBUG:", name, match)
-
         rows.append({
-            "sku": generate_store_sku(name, store_id),
+            "sku": generate_store_sku(p["name"], store_id),
 
-            "item_name": name,
+            "item_name": p["name"],
             "price": price,
             "original_price": original_price,
             "drop_pct": drop_pct,
@@ -64,20 +54,24 @@ def generate_data():
             "stock_qty": random.randint(0, 30),
             "store_name": STORE_MAP[store_id],
 
-            "hd_title": match["title"],
-            "hd_url": match["url"],
-            "hd_confidence": match["confidence"]
+            "hd_title": p["name"],
+            "hd_url": p["url"],
+            "hd_confidence": 0.9
         })
 
     return pd.DataFrame(rows)
 
 
 df = generate_data()
+
+if df.empty:
+    send_alert("❌ No products found — pipeline failed")
+    exit()
+
+
 df = predict(df)
 
 df.to_csv(DATA_PATH, index=False)
-
-print("DEBUG rows:", len(df))
 
 
 deals = df[df["drop_pct"] >= 20].sort_values("drop_pct", ascending=False)
@@ -99,7 +93,7 @@ def chunk(text, limit=3500):
     return parts
 
 
-message = "🚀 RETAIL DEAL ENGINE\n\n"
+message = "🔥 LIVE HOME DEPOT DEALS\n\n"
 
 for _, row in deals.iterrows():
 
@@ -112,11 +106,9 @@ for _, row in deals.iterrows():
 📉 {row['drop_pct']}% OFF
 📦 Stock: {row['stock_qty']}
 
-🧠 ML Score: {row['ml_score']}
+🧠 Score: {row['ml_score']}
 
-🔎 HD MATCH: {row['hd_title']}
 🌐 {row['hd_url']}
-🎯 Confidence: {row['hd_confidence']}
 
 ----------------------
 """
@@ -126,4 +118,4 @@ for part in chunk(message):
     send_alert(part)
 
 
-print("✅ DONE")
+print("✅ LIVE PIPELINE COMPLETE")
