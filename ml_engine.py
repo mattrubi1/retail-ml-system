@@ -1,29 +1,64 @@
-import joblib
-from sklearn.ensemble import RandomForestRegressor
+import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
 
-MODEL_PATH = "model.pkl"
+MODEL = None
+
 
 def train_model(df):
-    df["target"] = df["drop_pct"] * 0.6 + df["velocity"] * 20
-    X = df[["drop_pct", "velocity"]]
-    y = df["target"]
 
-    model = RandomForestRegressor(n_estimators=100)
+    global MODEL
+
+    df = df.copy()
+
+    if len(df) < 5:
+        MODEL = None
+        return
+
+    # synthetic label (initial learning signal)
+    df["label"] = np.where(
+        (df["drop_pct"] > 40) & (df["price"] < 50),
+        1,
+        0
+    )
+
+    features = ["price", "drop_pct", "velocity", "feature_score"]
+
+    for col in features:
+        if col not in df.columns:
+            df[col] = 0
+
+    X = df[features]
+    y = df["label"]
+
+    model = RandomForestClassifier(
+        n_estimators=100,
+        random_state=42
+    )
+
     model.fit(X, y)
 
-    joblib.dump(model, MODEL_PATH)
-    return model
+    MODEL = model
 
-def load_model():
-    try:
-        return joblib.load(MODEL_PATH)
-    except:
-        return None
 
 def predict(df):
-    model = load_model()
-    if model is None:
-        model = train_model(df)
 
-    df["ml_score"] = model.predict(df[["drop_pct", "velocity"]])
+    global MODEL
+
+    df = df.copy()
+
+    features = ["price", "drop_pct", "velocity", "feature_score"]
+
+    for col in features:
+        if col not in df.columns:
+            df[col] = 0
+
+    X = df[features]
+
+    if MODEL is None:
+        df["ml_score"] = df["feature_score"]
+        return df
+
+    df["ml_score"] = MODEL.predict_proba(X)[:, 1] * 100
+
     return df
