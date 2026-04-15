@@ -3,7 +3,6 @@ import pandas as pd
 import random
 
 from ml_engine import predict
-from openai_engine import enrich_with_gpt
 from utils import generate_sku, normalize_sku
 from alerts import send_alert
 
@@ -73,22 +72,13 @@ df = generate_data()
 
 df = predict(df)
 
-# =========================
-# GPT LAYER (SAFE)
-# =========================
-try:
-    df = enrich_with_gpt(df)
-except Exception as e:
-    print("GPT failed, continuing without:", e)
-
-
 df.to_csv(DATA_PATH, index=False, encoding="utf-8")
 
-print("DEBUG: rows =", len(df))
+print("DEBUG: Generated rows =", len(df))
 
 
 # =========================
-# FILTER: ALL DEALS 20%+
+# FILTER: 20%+ DISCOUNTS ONLY
 # =========================
 deals = df[df["drop_pct"] >= 20].sort_values("drop_pct", ascending=False)
 
@@ -112,7 +102,7 @@ def chunk(text, limit=3500):
     return chunks
 
 
-message = "🚨 FULL AI + GPT DEAL INTELLIGENCE (0–100% RANGE)\n\n"
+message = "🚨 FULL RETAIL DEAL INTELLIGENCE (FREE MODE)\n\n"
 
 for _, row in deals.iterrows():
 
@@ -126,10 +116,6 @@ for _, row in deals.iterrows():
 📦 Stock: {row['stock_qty']}
 
 🧠 ML Score: {row['ml_score']}
-🤖 GPT Score: {row.get('gpt_score', 'N/A')}
-🚀 Verdict: {row.get('gpt_verdict', 'N/A')}
-
-💡 {row.get('gpt_reasoning', 'No AI analysis')}
 
 ----------------------
 """
@@ -138,4 +124,4 @@ for _, row in deals.iterrows():
 for part in chunk(message):
     send_alert(part)
 
-print("✅ GPT System Running Successfully")
+print("✅ Free AI Deal Engine Running (No GPT)")
