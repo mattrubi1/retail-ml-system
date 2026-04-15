@@ -1,7 +1,7 @@
 import requests
 
-TOKEN = “8264216833:AAHFFfTVju6fY5ogTuenSUDQ5SutUs9DxN4”
-CHAT_ID = “7938644912”
+TOKEN = "8264216833:AAHFFfTVju6fY5ogTuenSUDQ5SutUs9DxN4"
+CHAT_ID = "7938644912"
 
 def send_alert(message):
 
