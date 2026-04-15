@@ -8,7 +8,8 @@ from alerts import send_alert
 from data_source import fetch_products
 
 
-send_alert("🚀 LIVE DATA PIPELINE STARTED")
+# 🔥 TEST TELEGRAM
+send_alert("🚀 CATEGORY PIPELINE STARTED")
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -25,21 +26,18 @@ STORE_MAP = {
 def generate_data():
 
     rows = []
-
     products = fetch_products()
 
-    print("REAL PRODUCTS FOUND:", len(products))
-
     if not products:
-        print("❌ No products found")
+        send_alert("❌ No products found")
         return pd.DataFrame()
 
     for p in products:
 
         store_id = random.choice(list(STORE_MAP.keys()))
 
-        original_price = random.randint(80, 300)
-        drop_pct = random.randint(20, 80)
+        original_price = random.randint(80, 400)
+        drop_pct = random.randint(20, 90)
 
         price = round(original_price * (1 - drop_pct / 100), 2)
 
@@ -56,7 +54,7 @@ def generate_data():
 
             "hd_title": p["name"],
             "hd_url": p["url"],
-            "hd_confidence": 0.9
+            "hd_confidence": 1.0
         })
 
     return pd.DataFrame(rows)
@@ -65,13 +63,14 @@ def generate_data():
 df = generate_data()
 
 if df.empty:
-    send_alert("❌ No products found — pipeline failed")
+    print("No data — exiting")
     exit()
-
 
 df = predict(df)
 
 df.to_csv(DATA_PATH, index=False)
+
+print("ROWS:", len(df))
 
 
 deals = df[df["drop_pct"] >= 20].sort_values("drop_pct", ascending=False)
@@ -93,7 +92,7 @@ def chunk(text, limit=3500):
     return parts
 
 
-message = "🔥 LIVE HOME DEPOT DEALS\n\n"
+message = "🔥 HOME DEPOT DEAL ENGINE\n\n"
 
 for _, row in deals.iterrows():
 
@@ -118,4 +117,4 @@ for part in chunk(message):
     send_alert(part)
 
 
-print("✅ LIVE PIPELINE COMPLETE")
+print("✅ DONE")
