@@ -34,9 +34,6 @@ ITEMS = [
 ]
 
 
-# =========================
-# GENERATE DATA
-# =========================
 def generate_data():
 
     rows = []
@@ -50,7 +47,6 @@ def generate_data():
         drop_pct = random.randint(20, 100)
 
         price = round(original_price * (1 - drop_pct / 100), 2)
-        price = max(price, 0)
 
         match = match_product(name)
 
@@ -73,29 +69,19 @@ def generate_data():
     return pd.DataFrame(rows)
 
 
-# =========================
-# PIPELINE
-# =========================
 df = generate_data()
 df = predict(df)
 
-df.to_csv(DATA_PATH, index=False, encoding="utf-8")
+df.to_csv(DATA_PATH, index=False)
 
 print("DEBUG: rows =", len(df))
 
 
-# =========================
-# FILTER DEALS (20%+ ONLY)
-# =========================
 deals = df[df["drop_pct"] >= 20].sort_values("drop_pct", ascending=False)
 
 
-# =========================
-# TELEGRAM SAFE CHUNKING
-# =========================
 def chunk(text, limit=3500):
-    chunks = []
-    current = ""
+    chunks, current = [], ""
 
     for line in text.split("\n"):
         if len(current) + len(line) > limit:
@@ -109,10 +95,7 @@ def chunk(text, limit=3500):
     return chunks
 
 
-# =========================
-# BUILD MESSAGE
-# =========================
-message = "🚀 RETAIL INTELLIGENCE ENGINE (STABLE v1)\n\n"
+message = "🚀 RETAIL INTELLIGENCE ENGINE\n\n"
 
 for _, row in deals.iterrows():
 
@@ -135,17 +118,12 @@ for _, row in deals.iterrows():
 """
 
 
-# =========================
-# SAFE SINGLE TELEGRAM SEND
-# =========================
 sent = False
 
 if not sent:
-
     for part in chunk(message):
         send_alert(part)
 
     sent = True
-    print("✅ Telegram sent once per run")
 
-print("✅ Scheduler complete")
+print("✅ Done")
