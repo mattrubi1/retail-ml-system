@@ -151,3 +151,8 @@ history = pd.concat([history, current], ignore_index=True)
 history.to_csv(HISTORY_FILE, index=False)
 
 print("✅ 120 items generated + 100 alerts sent (bulk mode)")
+
+import os
+
+print("DEBUG BOT_TOKEN:", repr(os.getenv("BOT_TOKEN")))
+print("DEBUG CHAT_ID:", repr(os.getenv("CHAT_ID")))
