@@ -6,11 +6,6 @@ HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 
 def match_product(item_name: str):
-    """
-    SAFE matcher:
-    - tries to find Home Depot URL
-    - always returns structured output
-    """
 
     try:
         query = urllib.parse.quote(f"site:homedepot.com {item_name}")
@@ -19,7 +14,6 @@ def match_product(item_name: str):
         r = requests.get(url, headers=HEADERS, timeout=10)
         html = r.text
 
-        # Extract ANY Home Depot URLs
         urls = re.findall(r"https://www\.homedepot\.com/p/[^\s\"']+", html)
 
         if urls:
@@ -31,7 +25,7 @@ def match_product(item_name: str):
                 "confidence": 0.75
             }
 
-        # fallback (NEVER return None)
+        # fallback
         return {
             "title": item_name,
             "url": "https://www.homedepot.com/",
