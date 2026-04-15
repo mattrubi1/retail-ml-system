@@ -1,5 +1,5 @@
 def generate_store_sku(item_name: str, store_id: str):
-    return f"{store_id}-{item_name[:6].upper()}-{abs(hash(item_name)) % 1000}"
+    return f"{store_id}-{item_name[:5].upper()}-{abs(hash(item_name)) % 9999}"
 
 
 def normalize_sku(sku: str):
