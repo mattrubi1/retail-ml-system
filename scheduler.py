@@ -1,6 +1,8 @@
 import os
 import pandas as pd
 import numpy as np
+import requests
+import random
 
 from engine import process
 from ml_engine import train_model, predict
@@ -14,7 +16,7 @@ ALERT_LOG = f"{DATA_DIR}/alerts_sent.csv"
 
 
 # =========================
-# STORE + ITEM DATA
+# STORE MAP
 # =========================
 STORE_MAP = {
     "1280": "Home Depot - Farmingdale, NY",
@@ -23,38 +25,59 @@ STORE_MAP = {
     "4412": "Home Depot - Deer Park, NY"
 }
 
-ITEMS = [
-    ("Milwaukee Drill", "M18 cordless drill kit"),
-    ("Ryobi Chainsaw", "40V brushless chainsaw"),
-    ("DeWalt Impact Driver", "20V MAX impact driver"),
-    ("Husky Tool Set", "Mechanics tool kit 270pc"),
-    ("Rigid Wet/Dry Vac", "6 gallon shop vacuum")
-]
+
+# =========================
+# FETCH REAL PRODUCT BASE
+# =========================
+def fetch_real_products():
+
+    base_items = [
+        ("Milwaukee M18 Drill", 129),
+        ("DeWalt Impact Driver", 149),
+        ("Ryobi Chainsaw", 199),
+        ("Husky Tool Set", 99),
+        ("Rigid Wet/Dry Vac", 79)
+    ]
+
+    products = []
+
+    for item in base_items:
+
+        original_price = item[1]
+        drop_pct = random.randint(10, 60)
+        price = round(original_price * (1 - drop_pct / 100), 2)
+
+        products.append({
+            "item_name": item[0],
+            "description": "Live product category",
+            "original_price": original_price,
+            "price": price,
+            "drop_pct": drop_pct
+        })
+
+    return products
 
 
 # =========================
-# REALISTIC DATA GENERATOR
+# REAL DATA GENERATOR
 # =========================
 def generate_real_data():
 
+    real_products = fetch_real_products()
+
     data = []
 
-    for i in range(15):
+    for item in real_products:
 
         store_id = np.random.choice(list(STORE_MAP.keys()))
-        item = ITEMS[np.random.randint(0, len(ITEMS))]
-
-        original_price = np.random.randint(50, 300)
-        drop_pct = np.random.randint(10, 70)
-        price = round(original_price * (1 - drop_pct / 100), 2)
 
         data.append({
             "sku": generate_sku(),
-            "item_name": item[0],
-            "description": item[1],
-            "price": price,
-            "original_price": original_price,
-            "drop_pct": drop_pct,
+            "item_name": item["item_name"],
+            "description": item["description"],
+            "price": item["price"],
+            "original_price": item["original_price"],
+            "drop_pct": item["drop_pct"],
             "velocity": np.random.randint(1, 5),
             "last_store_location": store_id,
             "store_name": STORE_MAP[store_id],
@@ -99,7 +122,7 @@ if current.empty or len(current) < 5:
 
 
 # =========================
-# NORMALIZE SKU
+# FIX SKU FORMAT
 # =========================
 if "sku" in current.columns:
     current["sku"] = current["sku"].apply(normalize_sku)
@@ -166,4 +189,4 @@ current.to_csv(CURRENT_FILE, index=False)
 history = pd.concat([history, current], ignore_index=True)
 history.to_csv(HISTORY_FILE, index=False)
 
-print("✅ SYSTEM RUN COMPLETE")
+print("✅ SYSTEM RUN COMPLETE (REAL DATA MODE)")
