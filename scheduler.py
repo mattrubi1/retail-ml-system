@@ -3,17 +3,34 @@ from engine import process
 from ml_engine import predict
 from alerts import send_alert
 
+# Load data
 df = pd.read_csv("data.csv")
 
+# Process + ML
 df = process(df)
 df = predict(df)
 
-# SAVE BACK TO CSV (this is now your database)
+# Save
 df.to_csv("data.csv", index=False)
 
-# TELEGRAM ALERTS
+# SEND ALERTS (FULL FORMAT)
 for _, row in df.iterrows():
-    if row["ml_score"] > 80:
-        send_alert(f"🚨 ALERT SKU {row['sku']} Score {row['ml_score']}")
 
-print("Updated system")
+    if row["ml_score"] > 80:
+
+        message = f"""🚨 HOME DEPOT CLEARANCE ALERT
+
+📦 Item: {row['item_name']}
+📝 Description: {row['description']}
+🏬 Store: {row['last_store_location']}
+🏷 SKU: {row['sku']}
+💰 Price: ${row['price']}
+📉 Discount: {row['drop_pct']}%
+📊 Score: {round(row['ml_score'], 2)}
+
+⚡ HIGH VALUE OPPORTUNITY
+"""
+
+        send_alert(message)
+
+print("Alerts sent + data updated")
