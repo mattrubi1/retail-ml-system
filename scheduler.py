@@ -3,6 +3,7 @@ import pandas as pd
 import random
 
 from ml_engine import predict
+from openai_engine import enrich_with_gpt
 from utils import generate_sku, normalize_sku
 from alerts import send_alert
 
@@ -43,9 +44,12 @@ def generate_data():
         store_id = random.choice(list(STORE_MAP.keys()))
 
         original_price = base_price + random.randint(10, 80)
-        drop_pct = random.randint(5, 80)
+
+        # FULL RANGE DISCOUNTS (0–100%)
+        drop_pct = random.randint(0, 100)
 
         price = round(original_price * (1 - drop_pct / 100), 2)
+        price = max(price, 0)
 
         rows.append({
             "sku": generate_sku(),
@@ -69,21 +73,46 @@ df = generate_data()
 
 df = predict(df)
 
+# =========================
+# GPT LAYER (SAFE)
+# =========================
+try:
+    df = enrich_with_gpt(df)
+except Exception as e:
+    print("GPT failed, continuing without:", e)
+
+
 df.to_csv(DATA_PATH, index=False, encoding="utf-8")
 
-print("DEBUG: Generated rows =", len(df))
+print("DEBUG: rows =", len(df))
 
 
 # =========================
-# FULL INVENTORY MODE (20%+)
+# FILTER: ALL DEALS 20%+
 # =========================
 deals = df[df["drop_pct"] >= 20].sort_values("drop_pct", ascending=False)
 
 
 # =========================
-# TELEGRAM MESSAGE
+# TELEGRAM SAFE CHUNKING
 # =========================
-message = "🚨 FULL STORE DISCOUNT INTELLIGENCE (20%+ ALL ITEMS)\n\n"
+def chunk(text, limit=3500):
+    chunks = []
+    current = ""
+
+    for line in text.split("\n"):
+        if len(current) + len(line) > limit:
+            chunks.append(current)
+            current = ""
+        current += line + "\n"
+
+    if current:
+        chunks.append(current)
+
+    return chunks
+
+
+message = "🚨 FULL AI + GPT DEAL INTELLIGENCE (0–100% RANGE)\n\n"
 
 for _, row in deals.iterrows():
 
@@ -97,11 +126,16 @@ for _, row in deals.iterrows():
 📦 Stock: {row['stock_qty']}
 
 🧠 ML Score: {row['ml_score']}
+🤖 GPT Score: {row.get('gpt_score', 'N/A')}
+🚀 Verdict: {row.get('gpt_verdict', 'N/A')}
+
+💡 {row.get('gpt_reasoning', 'No AI analysis')}
 
 ----------------------
 """
 
 
-send_alert(message)
+for part in chunk(message):
+    send_alert(part)
 
-print("✅ Scheduler finished successfully")
+print("✅ GPT System Running Successfully")
