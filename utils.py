@@ -1,27 +1,19 @@
-import numpy as np
-
-# =========================
-# GENERATE SKU (XXXX-XXX-XXX)
-# =========================
-def generate_sku():
-
-    raw = str(np.random.randint(1000000000, 9999999999))
-
-    return f"{raw[:4]}-{raw[4:7]}-{raw[7:10]}"
+import hashlib
 
 
-# =========================
-# NORMALIZE ANY SKU INPUT
-# =========================
-def normalize_sku(value):
+def generate_store_sku(item_name: str, store_id: str):
+    """
+    Creates a stable SKU based on store + item name
+    Same input ALWAYS produces same SKU
+    """
 
-    if value is None:
-        return generate_sku()
+    key = f"{store_id}-{item_name}"
 
-    value = str(value)
+    hash_obj = hashlib.md5(key.encode())
+    hash_hex = hash_obj.hexdigest()
 
-    digits = "".join(filter(str.isdigit, value))
+    return f"SKU-{hash_hex[:3]}-{hash_hex[3:6]}-{hash_hex[6:9]}"
 
-    digits = digits.zfill(10)
 
-    return f"{digits[:4]}-{digits[4:7]}-{digits[7:10]}"
+def normalize_sku(sku: str):
+    return str(sku).upper()
