@@ -8,7 +8,7 @@ CHAT_ID = os.getenv("CHAT_ID")
 def send_alert(text: str):
 
     if not BOT_TOKEN or not CHAT_ID:
-        print("Missing Telegram config")
+        print("❌ Missing BOT_TOKEN or CHAT_ID")
         return
 
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -20,6 +20,9 @@ def send_alert(text: str):
 
     try:
         r = requests.post(url, data=payload, timeout=10)
-        print("Telegram:", r.status_code)
+
+        print("STATUS:", r.status_code)
+        print("RESPONSE:", r.text)
+
     except Exception as e:
-        print("Telegram error:", e)
+        print("❌ Telegram error:", e)
