@@ -3,13 +3,11 @@ import pandas as pd
 import random
 
 from ml_engine import predict
+from ai_engine import enrich_dataframe
 from utils import generate_sku, normalize_sku
 from alerts import send_alert
 
 
-# =========================
-# PATH SETUP (CRITICAL FIX)
-# =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 DATA_PATH = os.path.join(DATA_DIR, "current.csv")
@@ -17,9 +15,6 @@ DATA_PATH = os.path.join(DATA_DIR, "current.csv")
 os.makedirs(DATA_DIR, exist_ok=True)
 
 
-# =========================
-# STORE MAP
-# =========================
 STORE_MAP = {
     "1280": "Home Depot - Farmingdale, NY",
     "6170": "Home Depot - Patchogue, NY",
@@ -27,9 +22,6 @@ STORE_MAP = {
 }
 
 
-# =========================
-# PRODUCT BASE LIST
-# =========================
 ITEMS = [
     ("Milwaukee Drill", 120),
     ("DeWalt Impact Driver", 180),
@@ -42,9 +34,6 @@ ITEMS = [
 ]
 
 
-# =========================
-# GENERATE DATA
-# =========================
 def generate_data():
 
     rows = []
@@ -74,51 +63,46 @@ def generate_data():
 
 
 # =========================
-# RUN PIPELINE
+# PIPELINE
 # =========================
 df = generate_data()
-print("DEBUG: Generated rows =", len(df))
 
 df = predict(df)
-print("DEBUG: ML scoring applied")
+df = enrich_dataframe(df)
 
-
-# =========================
-# SAVE CSV
-# =========================
 df.to_csv(DATA_PATH, index=False, encoding="utf-8")
 
-print("🔥 FILE EXISTS:", os.path.exists(DATA_PATH))
-print("🔥 FILE SIZE:", os.path.getsize(DATA_PATH))
+print("DEBUG: rows =", len(df))
 
 
 # =========================
-# BUILD TELEGRAM ALERT
+# FILTER TOP DEALS
 # =========================
-top = df.sort_values("ml_score", ascending=False).head(20)
+deals = df[df["ml_score"] >= 80].sort_values("ml_score", ascending=False).head(10)
 
-message = "🚨 RETAIL INTELLIGENCE ALERT\n\n"
+if deals.empty:
+    message = "🚨 NO HIGH VALUE DEALS FOUND THIS RUN"
+else:
+    message = "🚨 AI DEAL INTELLIGENCE ALERT\n\n"
 
-for _, row in top.iterrows():
-    message += f"""
-📦 {row['item_name']}
+    for _, row in deals.iterrows():
+
+        message += f"""
+🔥 {row['item_name']}
 🏷 SKU: {normalize_sku(row['sku'])}
 🏬 {row['store_name']}
 💰 ${row['price']} (Was ${row['original_price']})
-📉 {row['drop_pct']}%
+📉 {row['drop_pct']}% OFF
 📦 Stock: {row['stock_qty']}
-🧠 Score: {row['ml_score']}
+🧠 ML Score: {row['ml_score']}
+🤖 AI Score: {row['ai_score']}
+
+💡 Why:
+{row['ai_reasons']}
 
 ----------------------
 """
 
-print("DEBUG: Message length =", len(message))
-
-
-# =========================
-# SEND ALERT
-# =========================
 send_alert(message)
-
 
 print("✅ Scheduler finished")
