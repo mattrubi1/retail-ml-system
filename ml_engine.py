@@ -5,6 +5,9 @@ from sklearn.ensemble import RandomForestClassifier
 MODEL = None
 
 
+# =========================
+# TRAIN MODEL
+# =========================
 def train_model(df):
 
     global MODEL
@@ -15,7 +18,10 @@ def train_model(df):
         MODEL = None
         return
 
-    # synthetic label (initial learning signal)
+    # =========================
+    # SYNTHETIC LABEL (BOOTSTRAP LEARNING)
+    # =========================
+    # High value deal definition (initial training signal)
     df["label"] = np.where(
         (df["drop_pct"] > 40) & (df["price"] < 50),
         1,
@@ -41,6 +47,9 @@ def train_model(df):
     MODEL = model
 
 
+# =========================
+# PREDICT (FIXED PROBABILITY SCORING)
+# =========================
 def predict(df):
 
     global MODEL
@@ -55,10 +64,20 @@ def predict(df):
 
     X = df[features]
 
+    # =========================
+    # FALLBACK MODE (NO MODEL)
+    # =========================
     if MODEL is None:
-        df["ml_score"] = df["feature_score"]
+        # safe bounded score (0–100)
+        df["ml_score"] = (df["feature_score"] % 100).clip(0, 100)
         return df
 
-    df["ml_score"] = MODEL.predict_proba(X)[:, 1] * 100
+    # =========================
+    # REAL ML PROBABILITY OUTPUT
+    # =========================
+    probs = MODEL.predict_proba(X)[:, 1]
+
+    # normalize to 0–100
+    df["ml_score"] = (probs * 100).clip(0, 100)
 
     return df
