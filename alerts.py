@@ -1,47 +1,45 @@
-import requests
 import os
-
-TOKEN = os.getenv("BOT_TOKEN")
-CHAT_ID = os.getenv("CHAT_ID")
-
-BASE_URL = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+import requests
 
 
-def send_alert(message: str):
+def send_alert(message):
+
+    bot_token = os.getenv("BOT_TOKEN")
+    chat_id = os.getenv("CHAT_ID")
 
     print("🔔 Attempting Telegram send...")
 
     # =========================
-    # CHECK CONFIG
+    # DEBUG CHECK
     # =========================
-    if not TOKEN:
+    if not bot_token:
         print("❌ BOT_TOKEN missing")
         return
 
-    if not CHAT_ID:
+    if not chat_id:
         print("❌ CHAT_ID missing")
         return
 
-    print("✅ Token + Chat ID found")
+    print("✅ BOT_TOKEN loaded")
+    print("✅ CHAT_ID loaded")
 
     # =========================
-    # SPLIT SAFE
+    # SEND MESSAGE
     # =========================
-    chunks = [message[i:i+3500] for i in range(0, len(message), 3500)]
+    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
 
-    for i, chunk in enumerate(chunks):
+    payload = {
+        "chat_id": chat_id,
+        "text": message
+    }
 
-        payload = {
-            "chat_id": CHAT_ID,
-            "text": chunk
-        }
+    try:
+        response = requests.post(url, data=payload)
 
-        try:
-            response = requests.post(BASE_URL, data=payload, timeout=10)
+        if response.status_code == 200:
+            print("✅ Telegram sent successfully")
+        else:
+            print("❌ Telegram failed:", response.text)
 
-            print(f"📤 Sent chunk {i+1}/{len(chunks)}")
-            print("Status:", response.status_code)
-            print("Response:", response.text)
-
-        except Exception as e:
-            print("❌ Telegram request failed:", str(e))
+    except Exception as e:
+        print("❌ Telegram error:", str(e))
