@@ -3,14 +3,22 @@ import pandas as pd
 import random
 
 from ml_engine import predict
-from alerts import send_alert
 from utils import generate_sku, normalize_sku
+from alerts import send_alert
 
 
-DATA_PATH = "data/current.csv"
-os.makedirs("data", exist_ok=True)
+# =========================
+# PATH (CRITICAL FIX)
+# =========================
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(BASE_DIR, "data", "current.csv")
+
+os.makedirs(os.path.join(BASE_DIR, "data"), exist_ok=True)
 
 
+# =========================
+# STORE MAP
+# =========================
 STORE_MAP = {
     "1280": "Home Depot - Farmingdale, NY",
     "6170": "Home Depot - Patchogue, NY",
@@ -18,19 +26,27 @@ STORE_MAP = {
 }
 
 
+# =========================
+# PRODUCT BASE
+# =========================
 ITEMS = [
     ("Milwaukee Drill", 120),
     ("DeWalt Impact Driver", 180),
     ("Ryobi Chainsaw", 150),
     ("Husky Tool Set", 90),
     ("Rigid Wet/Dry Vac", 110),
-    ("Makita Grinder", 160)
+    ("Makita Grinder", 160),
+    ("Ryobi Blower", 85),
+    ("DeWalt Saw", 210)
 ]
 
 
+# =========================
+# GENERATE DATA
+# =========================
 def generate_data():
 
-    data = []
+    rows = []
 
     for _ in range(120):
 
@@ -39,47 +55,57 @@ def generate_data():
 
         original_price = base_price + random.randint(10, 80)
         drop_pct = random.randint(5, 60)
+
         price = round(original_price * (1 - drop_pct / 100), 2)
 
-        data.append({
+        rows.append({
             "sku": generate_sku(),
             "item_name": name,
             "price": price,
             "original_price": original_price,
             "drop_pct": drop_pct,
             "velocity": random.randint(1, 10),
-
-            # ✅ NEW FIELD
-            "stock_qty": random.randint(0, 25),
-
+            "stock_qty": random.randint(0, 30),
             "store_name": STORE_MAP[store_id],
             "last_store_location": store_id
         })
 
-    return pd.DataFrame(data)
+    return pd.DataFrame(rows)
 
 
 # =========================
 # RUN PIPELINE
 # =========================
 df = generate_data()
+
+print("DEBUG: Generated rows =", len(df))
+
 df = predict(df)
 
-df.to_csv(DATA_PATH, index=False)
+print("DEBUG: After ML scoring complete")
+print(df[["item_name", "ml_score"]].head())
 
-print("✅ current.csv updated with stock intelligence")
+
+# =========================
+# SAVE CSV (FIXED)
+# =========================
+df.to_csv(DATA_PATH, index=False, encoding="utf-8")
+
+print(f"✅ CSV WRITTEN: {DATA_PATH}")
 
 
 # =========================
 # TELEGRAM ALERTS (TOP 100)
 # =========================
-top = df.sort_values("ml_score", ascending=False).head(100)
+try:
 
-message = "🚨 RETAIL INTELLIGENCE ALERT\n\n"
+    top = df.sort_values("ml_score", ascending=False).head(100)
 
-for _, row in top.iterrows():
+    message = "🚨 RETAIL INTELLIGENCE ALERT\n\n"
 
-    message += f"""
+    for _, row in top.iterrows():
+
+        message += f"""
 📦 {row['item_name']}
 🏷 SKU: {normalize_sku(row['sku'])}
 🏬 {row['store_name']}
@@ -91,6 +117,16 @@ for _, row in top.iterrows():
 ----------------------
 """
 
-send_alert(message)
+    send_alert(message)
 
-print("✅ Telegram sent")
+    print("✅ Telegram sent successfully")
+
+except Exception as e:
+    print("⚠️ Telegram failed:", str(e))
+
+
+# =========================
+# FINAL DEBUG
+# =========================
+print("DEBUG SAMPLE:")
+print(df.head(3))
