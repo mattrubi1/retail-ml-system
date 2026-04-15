@@ -1,55 +1,47 @@
 import requests
 import os
-import time
 
-# =========================
-# TELEGRAM CONFIG
-# =========================
 TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
 BASE_URL = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
 
-# =========================
-# SAFETY CHECK
-# =========================
-if not TOKEN or not CHAT_ID:
-    print("❌ Missing BOT_TOKEN or CHAT_ID environment variables")
-
-
-# =========================
-# MESSAGE SENDER
-# =========================
 def send_alert(message: str):
 
-    if not TOKEN or not CHAT_ID:
-        print("❌ Telegram not configured properly")
+    print("🔔 Attempting Telegram send...")
+
+    # =========================
+    # CHECK CONFIG
+    # =========================
+    if not TOKEN:
+        print("❌ BOT_TOKEN missing")
         return
 
-    # Telegram hard limit ~4096 chars → we stay safe under it
-    MAX_CHUNK = 3500
+    if not CHAT_ID:
+        print("❌ CHAT_ID missing")
+        return
 
-    chunks = [
-        message[i:i + MAX_CHUNK]
-        for i in range(0, len(message), MAX_CHUNK)
-    ]
+    print("✅ Token + Chat ID found")
 
-    for chunk in chunks:
+    # =========================
+    # SPLIT SAFE
+    # =========================
+    chunks = [message[i:i+3500] for i in range(0, len(message), 3500)]
+
+    for i, chunk in enumerate(chunks):
 
         payload = {
             "chat_id": CHAT_ID,
-            "text": chunk,
-            "parse_mode": "HTML"
+            "text": chunk
         }
 
         try:
             response = requests.post(BASE_URL, data=payload, timeout=10)
 
-            if response.status_code != 200:
-                print("❌ Telegram Error:", response.text)
-
-            time.sleep(0.3)  # prevents rate limits
+            print(f"📤 Sent chunk {i+1}/{len(chunks)}")
+            print("Status:", response.status_code)
+            print("Response:", response.text)
 
         except Exception as e:
-            print("❌ Telegram Exception:", str(e))
+            print("❌ Telegram request failed:", str(e))
