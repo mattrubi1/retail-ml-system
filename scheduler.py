@@ -5,11 +5,7 @@ import random
 from ml_engine import predict
 from utils import generate_store_sku, normalize_sku
 from alerts import send_alert
-from data_source import fetch_products
-
-
-# 🔥 TEST TELEGRAM
-send_alert("🚀 CATEGORY PIPELINE STARTED")
+from data_source import fetch_all_products
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -25,12 +21,13 @@ STORE_MAP = {
 
 def generate_data():
 
-    rows = []
-    products = fetch_products()
+    products = fetch_all_products()
 
     if not products:
-        send_alert("❌ No products found")
+        send_alert("❌ No products found from search pipeline")
         return pd.DataFrame()
+
+    rows = []
 
     for p in products:
 
@@ -38,7 +35,6 @@ def generate_data():
 
         original_price = random.randint(80, 400)
         drop_pct = random.randint(20, 90)
-
         price = round(original_price * (1 - drop_pct / 100), 2)
 
         rows.append({
@@ -52,8 +48,8 @@ def generate_data():
             "stock_qty": random.randint(0, 30),
             "store_name": STORE_MAP[store_id],
 
-            "hd_title": p["name"],
             "hd_url": p["url"],
+            "hd_title": p["name"],
             "hd_confidence": 1.0
         })
 
@@ -63,36 +59,17 @@ def generate_data():
 df = generate_data()
 
 if df.empty:
-    print("No data — exiting")
+    print("No data")
     exit()
 
 df = predict(df)
 
 df.to_csv(DATA_PATH, index=False)
 
-print("ROWS:", len(df))
-
-
 deals = df[df["drop_pct"] >= 20].sort_values("drop_pct", ascending=False)
 
 
-def chunk(text, limit=3500):
-    parts = []
-    cur = ""
-
-    for line in text.split("\n"):
-        if len(cur) + len(line) > limit:
-            parts.append(cur)
-            cur = ""
-        cur += line + "\n"
-
-    if cur:
-        parts.append(cur)
-
-    return parts
-
-
-message = "🔥 HOME DEPOT DEAL ENGINE\n\n"
+message = "🔥 DEAL ENGINE OUTPUT\n\n"
 
 for _, row in deals.iterrows():
 
@@ -113,8 +90,6 @@ for _, row in deals.iterrows():
 """
 
 
-for part in chunk(message):
-    send_alert(part)
+send_alert(message)
 
-
-print("✅ DONE")
+print("DONE")
