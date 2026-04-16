@@ -6,26 +6,24 @@ import time
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 SEARCH_TERMS = [
-    "drill",
-    "impact driver",
-    "circular saw",
-    "chainsaw",
-    "wet dry vac",
-    "tool set",
-    "grinder",
-    "leaf blower",
-    "table saw",
-    "sander"
+    "drill site:homedepot.com",
+    "impact driver site:homedepot.com",
+    "chainsaw site:homedepot.com",
+    "wet dry vac site:homedepot.com",
+    "tool set site:homedepot.com",
+    "grinder site:homedepot.com",
+    "leaf blower site:homedepot.com",
+    "table saw site:homedepot.com",
 ]
 
 
-def extract_product_urls(text):
+def extract_links(html):
 
-    matches = re.findall(r"https://www\.homedepot\.com/p/[^\s\"']+", text)
+    matches = re.findall(r"https://www\.homedepot\.com/p/[^\s\"<>]+", html)
 
     cleaned = []
     for m in matches:
-        url = m.split("?")[0]
+        url = m.split("&")[0]
         if url not in cleaned:
             cleaned.append(url)
 
@@ -40,9 +38,9 @@ def fetch_products():
 
         try:
             query = urllib.parse.quote(term)
-            url = f"https://www.homedepot.com/s/{query}"
+            url = f"https://www.bing.com/search?q={query}"
 
-            print(f"Searching: {term}")
+            print(f"Searching Bing: {term}")
 
             r = requests.get(url, headers=HEADERS, timeout=10)
 
@@ -50,15 +48,19 @@ def fetch_products():
                 print("Blocked:", r.status_code)
                 continue
 
-            urls = extract_product_urls(r.text)
+            links = extract_links(r.text)
 
-            for u in urls[:25]:
+            if not links:
+                print("⚠️ No links found")
+                continue
 
-                name = u.split("/")[-1].replace("-", " ")
+            for l in links[:20]:
+
+                name = l.split("/")[-1].replace("-", " ")
 
                 all_products.append({
                     "name": name.title(),
-                    "url": u.split("?")[0]
+                    "url": l
                 })
 
             time.sleep(1)
@@ -71,6 +73,6 @@ def fetch_products():
 
     final = list(unique.values())
 
-    print("TOTAL PRODUCTS:", len(final))
+    print("✅ TOTAL PRODUCTS FOUND:", len(final))
 
     return final
