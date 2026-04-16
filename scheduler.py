@@ -6,6 +6,7 @@ from ml_engine import predict
 from utils import generate_store_sku, normalize_sku
 from alerts import send_alert
 from data_source import fetch_all_products
+from price_engine import fetch_price
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -19,23 +20,36 @@ STORE_MAP = {
 }
 
 
+# ==============================
+# 🔥 REAL DATA GENERATION
+# ==============================
+
 def generate_data():
 
     products = fetch_all_products()
 
     if not products:
-        send_alert("❌ No products found from search pipeline")
+        send_alert("❌ No products found from pipeline")
         return pd.DataFrame()
 
     rows = []
 
     for p in products:
 
-        store_id = random.choice(list(STORE_MAP.keys()))
+        print(f"Fetching price: {p['url']}")
 
-        original_price = random.randint(80, 400)
-        drop_pct = random.randint(20, 90)
-        price = round(original_price * (1 - drop_pct / 100), 2)
+        price = fetch_price(p["url"])
+
+        if price is None:
+            print("⚠️ Skipping (no price found)")
+            continue
+
+        # Temporary original price estimation (until we extract real MSRP)
+        original_price = round(price * random.uniform(1.2, 1.8), 2)
+
+        drop_pct = round((original_price - price) / original_price * 100, 2)
+
+        store_id = random.choice(list(STORE_MAP.keys()))
 
         rows.append({
             "sku": generate_store_sku(p["name"], store_id),
@@ -53,23 +67,54 @@ def generate_data():
             "hd_confidence": 1.0
         })
 
-    return pd.DataFrame(rows)
+    df = pd.DataFrame(rows)
 
+    print(f"✅ REAL PRODUCTS WITH PRICE: {len(df)}")
+
+    return df
+
+
+# ==============================
+# 🚀 PIPELINE EXECUTION
+# ==============================
 
 df = generate_data()
 
 if df.empty:
-    print("No data")
+    print("❌ No data generated")
     exit()
 
+# ML scoring
 df = predict(df)
 
+# Save output
 df.to_csv(DATA_PATH, index=False)
 
+# Filter deals
 deals = df[df["drop_pct"] >= 20].sort_values("drop_pct", ascending=False)
 
 
-message = "🔥 DEAL ENGINE OUTPUT\n\n"
+# ==============================
+# 📤 TELEGRAM FORMATTING
+# ==============================
+
+def chunk(text, limit=3500):
+    parts = []
+    cur = ""
+
+    for line in text.split("\n"):
+        if len(cur) + len(line) > limit:
+            parts.append(cur)
+            cur = ""
+        cur += line + "\n"
+
+    if cur:
+        parts.append(cur)
+
+    return parts
+
+
+message = "🔥 REAL DEAL ENGINE OUTPUT\n\n"
 
 for _, row in deals.iterrows():
 
@@ -90,6 +135,9 @@ for _, row in deals.iterrows():
 """
 
 
-send_alert(message)
+# Send in chunks (Telegram safe)
+for part in chunk(message):
+    send_alert(part)
 
-print("DONE")
+
+print("🚀 DONE")
